@@ -1,8 +1,10 @@
 # Proyecto 2 - Motion Vectors Algorithm
 
 By: Stiven Ramírez Arango - sramir70@eafit.edu.co
-    Sebastián Ospina Cabarcas 
-    Camilo Suaza Gallego
+    
+    Sebastián Ospina Cabarcas - sospin26@eafit.edu.co
+    
+    Camilo Suaza Gallego - csuazag@eafit.edu.co
 
 # 1. Análisis, Diseño e Implementación del Algoritmo Secuencial
 
