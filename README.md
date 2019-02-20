@@ -19,6 +19,6 @@
 
 * [Algoritmo Paralelo con MPI](algoritmo-paralelo-mpi.md)
 
-# 4. Algoritmo Paralelo con OpenMP y MPI (Metodología PCAM)
+# 4. Algoritmo Paralelo con OpenMP y MPI (PCAM)
 
 * [Algoritmo Paralelo con OpenMP y MPI (PCAM)](algoritmo-paralelo-openmp-mpi.md)
