@@ -7,18 +7,18 @@
     
     Camilo Suaza Gallego - csuazag@eafit.edu.co
 
-# 1. Análisis, Diseño e Implementación del Algoritmo Secuencial
+# 1. Algoritmo Secuencial
 
 * [Algoritmo Secuencial](algoritmo-secuencial.md)
 
-# 2. Análisis, Diseño e Implementación del Algoritmo Paralelo con OpenMP
+# 2. Algoritmo Paralelo con OpenMP
 
 * [Algoritmo Paralelo con OpenMP](algoritmo-paralelo-openmp.md)
 
-# 3. Análisis, Diseño e Implementación del Algoritmo Paralelo con MPI
+# 3. Algoritmo Paralelo con MPI
 
 * [Algoritmo Paralelo con MPI](algoritmo-paralelo-mpi.md)
 
-# 4. Análisis, Diseño e Implementación del Algoritmo Paralelo con OpenMP y MPI
+# 4. Algoritmo Paralelo con OpenMP y MPI (Metodología PCAM)
 
-* [Algoritmo Paralelo con OpenMP y MPI](algoritmo-paralelo-openmp-mpi.md)
+* [Algoritmo Paralelo con OpenMP y MPI (PCAM)](algoritmo-paralelo-openmp-mpi.md)
