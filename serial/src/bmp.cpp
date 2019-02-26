@@ -17,7 +17,7 @@ int NCOLS;
 
 
 /**
- * robado de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
+ * Extraído de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
  * */
 unsigned char* readBMP(char* filename){
     int i;
