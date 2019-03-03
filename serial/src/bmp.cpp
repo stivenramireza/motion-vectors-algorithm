@@ -64,7 +64,7 @@ void algorithm(Image im1, Image im2){
     for(int i = 0; i < im1.height;i+=15){
         for(int j = 0; j < im1.width; j+=15){
             ValueResult* minimo = new ValueResult();
-            minimo->minimo = 2;
+            minimo->minimo =99999999999;
             printf("inicia frame2\n");
             for(int u = 0; u < im2.height-15; u++){
                 for(int l = 0; l < im2.width-15 ; l++){
@@ -73,12 +73,14 @@ void algorithm(Image im1, Image im2){
                         sumatoria += abs(im1.arrayOfPixels[im1.getIndex(i,j)+k] - im2.arrayOfPixels[im2.getIndex(u,l)+k]);
                         
                     }
-                   
-                    if(sumatoria < minimo->minimo){
-                        minimo->minimo = sumatoria;
-                        minimo->x = i;
-                        minimo->y = j;
-                    }
+                    
+                        if(sumatoria < minimo->minimo){
+                            minimo->minimo = sumatoria;
+                            minimo->x = i;
+                            minimo->y = j;
+                        }
+                    
+                    if(sumatoria == 0) break;
                    
                 }
             }
