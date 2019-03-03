@@ -16,7 +16,7 @@ using namespace std;
 
 
 /**
- * robado de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
+ * Extraído de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
  * */
 Image readBMP(char* filename){
     

@@ -4,6 +4,10 @@
     Sebastián Ospina Cabarcas - sospin26@eafit.edu.co
     Camilo Suaza Gallego - csuazag@eafit.edu.co
 
+
+
+![Monting Vectors Algorithm](algoritmo.jpeg?raw=true "Motion Vectors Algorithm")
+
 # 1. Algoritmo Secuencial
 
 * [Algoritmo Secuencial](algoritmo-secuencial.md)
