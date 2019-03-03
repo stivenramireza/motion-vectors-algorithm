@@ -75,13 +75,17 @@ void algorithm(Image im1, Image im2){
                    if(minimo->minimo != NULL){
                     if(sumatoria<minimo->minimo){
                         minimo->minimo = sumatoria;
+                        minimo->x = i;
+                        minimo->y = j;
                     }
                    }else{
                        minimo->minimo = sumatoria;
+                       minimo->x = i;
+                        minimo->y = j;
                    }
                 }
             }
-            printf("minimo : %i \n",minimo);
+            printf("minimo : %i \n",minimo->minimo);
             result[i] = minimo;
         }
     }
