@@ -55,18 +55,21 @@ Image readBMP(char* filename){
 
 
 void algorithm(Image im1, Image im2){
-    ValueResult* result[im1.height/15];
+    
+    ValueResult* result[im1.height/16 * im1.width/16];
 
-    for(int i = 0; i < im1.height;i+=15){
-        for(int j = 0; j < im1.width; j+=15){
+    for(int i = 0; i < im1.height;i+=16){
+        for(int j = 0; j < im1.width; j+=16){
+
             ValueResult* minimo = new ValueResult();
             minimo->minimo =99999999999;
-            printf("inicia frame2\n");
-            for(int u = 0; u < im2.height-15; u++){
-                for(int l = 0; l < im2.width-15 ; l++){
+            //printf("inicia frame2\n");
+            for(int u = 0; u < im2.height-16; u++){
+                for(int l = 0; l < im2.width-16 ; l++){
+
                     int sumatoria = 0;
-                    for(int k = 0; k < 15; k++){
-                        for(int y = 0; y < 15; y++){
+                    for(int k = 0; k < 16; k++){
+                        for(int y = 0; y < 16; y++){
                             sumatoria += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
                         }
                     }
@@ -82,21 +85,26 @@ void algorithm(Image im1, Image im2){
                 }
             }
             endFrame2:
-            printf("minimo : %i \n",minimo->minimo);
+            //printf("minimo : %i \n",minimo->minimo);
             result[i] = minimo;
         }
     }
-    for(int i = 0;i < im1.height/15 ; i++){
-        printf("x: %i  y: %i minimo: %i ",result[i]->x,result[i]->y,result[i]->minimo);
-    }
+    //for(int i = 0;i < im1.height/16 ; i++){
+    //    printf("x: %i  y: %i minimo: %i ",result[i]->x,result[i]->y,result[i]->minimo);
+    //}
+    
 }
 
 
 int main(){
+    printf("INICIO PRIMERA LECTURA\n");
     Image im1 = readBMP(f1);
+    printf("PASANDO A LA SEGUNDA LECTURA\n");
     Image im2 = readBMP(f2);
+    printf("FINALIZANDO LA SEGUNDA LECTURA\n");
     
-    
+    printf("ESTOY EMPEZANDO LA EJECUCION\n");
     algorithm(im1,im2);
+    printf("FINISHED");
     return 0;
 }
