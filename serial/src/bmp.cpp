@@ -56,8 +56,8 @@ Image readBMP(char* filename){
 
 void algorithm(Image im1, Image im2){
     
-    ValueResult* result[im1.height/16 * im1.width/16];
-
+    ValueResult* result[(im1.height/16) * (im1.width/16)];
+    
     for(int i = 0; i < im1.height;i+=16){
         for(int j = 0; j < im1.width; j+=16){
 
@@ -89,6 +89,8 @@ void algorithm(Image im1, Image im2){
             result[i] = minimo;
         }
     }
+
+    printf()
     //for(int i = 0;i < im1.height/16 ; i++){
     //    printf("x: %i  y: %i minimo: %i ",result[i]->x,result[i]->y,result[i]->minimo);
     //}
