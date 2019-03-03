@@ -2,7 +2,7 @@
 #include "../include/bmp.h"
 
 #define f1 "../imagenes/frame1.bmp"
-#define f2 "../imagenes/frame1.bmp"
+#define f2 "../imagenes/frame2.bmp"
 
 using namespace std;
 
