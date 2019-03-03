@@ -11,7 +11,7 @@ public:
 };
 
 typedef struct ValueResult{
-    int x,y,minimo;
+    int x,y,minimum;
 } ValueResult;
 
 

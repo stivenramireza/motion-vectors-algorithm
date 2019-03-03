@@ -61,8 +61,8 @@ void algorithm(Image im1, Image im2){
     for(int i = 0; i < im1.height;i+=16){
         for(int j = 0; j < im1.width; j+=16){
 
-            ValueResult* minimo = new ValueResult();
-            minimo->minimo =99999999999;
+            ValueResult* dataFrame = new ValueResult();
+            dataFrame->minimum =99999999999;
             //printf("inicia frame2\n");
             for(int u = 0; u < im2.height-16; u++){
                 for(int l = 0; l < im2.width-16 ; l++){
@@ -74,10 +74,10 @@ void algorithm(Image im1, Image im2){
                         }
                     }
                     
-                    if(sumatoria < minimo->minimo){
-                        minimo->minimo = sumatoria;
-                        minimo->x = i;
-                        minimo->y = j;
+                    if(sumatoria < dataFrame->minimum){
+                        dataFrame->minimum = sumatoria;
+                        dataFrame->x = i;
+                        dataFrame->y = j;
                     }
                     
                     if(sumatoria == 0) goto endFrame2;
@@ -85,12 +85,12 @@ void algorithm(Image im1, Image im2){
                 }
             }
             endFrame2:
-            //printf("minimo : %i \n",minimo->minimo);
-            result[i] = minimo;
+            //printf("minimum : %i \n",dataFrame->minimum);
+            result[i] = dataFrame;
         }
     }
 
-    printf()
+    
     //for(int i = 0;i < im1.height/16 ; i++){
     //    printf("x: %i  y: %i minimo: %i ",result[i]->x,result[i]->y,result[i]->minimo);
     //}
