@@ -2,7 +2,7 @@
 #include "../include/bmp.h"
 
 #define f1 "../imagenes/frame1.bmp"
-#define f2 "../imagenes/frame2.bmp"
+#define f2 "../imagenes/frame1.bmp"
 
 using namespace std;
 
@@ -32,7 +32,7 @@ Image readBMP(char* filename){
     int width = *(int*)&info[18];
     int height = *(int*)&info[22];
     Image im;
-
+    printf("header: %i",info[10]);
     im.width = width;
     im.height = height;
 
@@ -40,21 +40,26 @@ Image readBMP(char* filename){
     printf("bits: %i\n",bits);
     
 
-    int size = width * height; //
-    unsigned char* data = new unsigned char[size]; // allocate 1 byte per pixel
-    fread(data, sizeof(unsigned char), size, f); // read the rest of the data at once
+    int row_padded = (width + 3) & (~3);
+    int size = width * height;
+    unsigned char* data = new unsigned char[size];
+    unsigned int matrix_addr = *(int *) &info[10];
+    fseek(f, matrix_addr-54, SEEK_CUR);
+    fread(data, sizeof(unsigned char), size, f); 
+    
     fclose(f);
+    
     printf("height: %i, width: %i\n",height,width);
+    printf("first value: %i\n",data[0]);
     //for(i = 0; i < size; i++){ // remember the format in bmp is  bgr 3 bytes for RGB 1 byte for R 1 for G and 1 for B
     //    printf("data[%i] = %i \n ",i,data[i]);
     //}
-    
     im.arrayOfPixels = data;
+    im.height = height;
+    im.width = width;
+    
     return im;
 }
-
-
-int Image::getIndex(int row, int col) { return row*width+col; }
 
 
 
@@ -69,21 +74,23 @@ void algorithm(Image im1, Image im2){
             for(int u = 0; u < im2.height-15; u++){
                 for(int l = 0; l < im2.width-15 ; l++){
                     int sumatoria = 0;
-                    for(int k = 0; k < 15*15; k++){
-                        sumatoria += abs(im1.arrayOfPixels[im1.getIndex(i,j)+k] - im2.arrayOfPixels[im2.getIndex(u,l)+k]);
-                        
+                    for(int k = 0; k < 15; k++){
+                        for(int y = 0; y < 15; y++){
+                            sumatoria += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
+                        }
                     }
                     
-                        if(sumatoria < minimo->minimo){
-                            minimo->minimo = sumatoria;
-                            minimo->x = i;
-                            minimo->y = j;
-                        }
+                    if(sumatoria < minimo->minimo){
+                        minimo->minimo = sumatoria;
+                        minimo->x = i;
+                        minimo->y = j;
+                    }
                     
-                    if(sumatoria == 0) break;
+                    if(sumatoria == 0) goto endFrame2;
                    
                 }
             }
+            endFrame2:
             printf("minimo : %i \n",minimo->minimo);
             result[i] = minimo;
         }
@@ -97,9 +104,8 @@ void algorithm(Image im1, Image im2){
 int main(){
     Image im1 = readBMP(f1);
     Image im2 = readBMP(f2);
-    //loadBmp();
+    
     
     algorithm(im1,im2);
-    
     return 0;
 }

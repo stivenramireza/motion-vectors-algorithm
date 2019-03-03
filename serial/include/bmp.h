@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-
+#define getIndex(row, col, NCOLS)(row*NCOLS+col)
 
 class Image {
 public:
   int width;
   int height;
   unsigned char* arrayOfPixels;
-  int getIndex(int row, int col);
 };
 
 typedef struct ValueResult{
