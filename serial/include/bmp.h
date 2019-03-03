@@ -11,7 +11,9 @@ public:
   int getIndex(int row, int col);
 };
 
-class 
+typedef struct ValueResult{
+    int x,y,minimo;
+} ValueResult;
 
 
 Image readBMP(char* filename);

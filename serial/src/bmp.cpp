@@ -59,11 +59,11 @@ int Image::getIndex(int row, int col) { return row*width+col; }
 
 
 void algorithm(Image im1, Image im2){
-    int result[im1.height/15];
+    ValueResult* result[im1.height/15];
 
     for(int i = 0; i < im1.height;i+=15){
         for(int j = 0; j < im1.width; j+=15){
-            int minimo = NULL;
+            ValueResult* minimo = new ValueResult();
             printf("inicia frame2\n");
             for(int u = 0; u < im2.height-15; u++){
                 for(int l = 0; l < im2.width-15 ; l++){
@@ -72,18 +72,21 @@ void algorithm(Image im1, Image im2){
                         sumatoria += abs(im1.arrayOfPixels[im1.getIndex(i,j)+k] - im2.arrayOfPixels[im2.getIndex(u,l)+k]);
                         
                     }
-                   if(minimo != NULL){
-                    if(sumatoria<minimo){
-                        minimo = sumatoria;
+                   if(minimo->minimo != NULL){
+                    if(sumatoria<minimo->minimo){
+                        minimo->minimo = sumatoria;
                     }
                    }else{
-                       minimo = sumatoria;
+                       minimo->minimo = sumatoria;
                    }
                 }
             }
             printf("minimo : %i \n",minimo);
             result[i] = minimo;
         }
+    }
+    for(int i = 0;i < im1.height/15 ; i++){
+        printf("x: %i  y: %i minimo: %i ",result[i]->x,result[i]->y,result[i]->minimo);
     }
 }
 
