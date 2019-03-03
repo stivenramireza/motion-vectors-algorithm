@@ -6,16 +6,16 @@
 
 # 1. Algoritmo Serial
 
-* [Algoritmo Serial](algoritmo-serial.md)
+* [Algoritmo Serial](serial.md)
 
 # 2. Algoritmo Paralelo con OpenMP
 
-* [Algoritmo Paralelo con OpenMP](algoritmo-paralelo-openmp.md)
+* [Algoritmo Paralelo con OpenMP](openmp.md)
 
 # 3. Algoritmo Paralelo con MPI
 
-* [Algoritmo Paralelo con MPI](algoritmo-paralelo-mpi.md)
+* [Algoritmo Paralelo con MPI](mpi.md)
 
 # 4. Algoritmo Paralelo con OpenMP y MPI (PCAM)
 
-* [Algoritmo Paralelo con OpenMP y MPI (PCAM)](algoritmo-paralelo-openmp-mpi.md)
+* [Algoritmo Paralelo con OpenMP y MPI (PCAM)](pcam.md)
