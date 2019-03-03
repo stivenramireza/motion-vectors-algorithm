@@ -56,37 +56,40 @@ Image readBMP(char* filename){
 
 void algorithm(Image im1, Image im2){
     
+    int indexResults = 0;
     ValueResult* result[(im1.height/16) * (im1.width/16)];
     
     for(int i = 0; i < im1.height;i+=16){
         for(int j = 0; j < im1.width; j+=16){
 
             ValueResult* dataFrame = new ValueResult();
-            dataFrame->minimum =99999999999;
+            dataFrame->minimum =2147483647; // Maximum value for a variable of type int.
             //printf("inicia frame2\n");
             for(int u = 0; u < im2.height-16; u++){
                 for(int l = 0; l < im2.width-16 ; l++){
 
-                    int sumatoria = 0;
+                    int summation = 0;
                     for(int k = 0; k < 16; k++){
                         for(int y = 0; y < 16; y++){
-                            sumatoria += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
+                            summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
                         }
                     }
                     
-                    if(sumatoria < dataFrame->minimum){
-                        dataFrame->minimum = sumatoria;
-                        dataFrame->x = i;
-                        dataFrame->y = j;
+                    if(summation < dataFrame->minimum){
+                        dataFrame->minimum = summation;
+                        dataFrame->iFrame1 = i;
+                        dataFrame->jFrame1 = j;
+                        dataFrame->iFrame2 = u;
+                        dataFrame->jFrame2 = l;           
+
+                        if(summation == 0) goto endFrame2;
                     }
-                    
-                    if(sumatoria == 0) goto endFrame2;
-                   
                 }
             }
             endFrame2:
             //printf("minimum : %i \n",dataFrame->minimum);
-            result[i] = dataFrame;
+            result[indexResults] = dataFrame;
+            indexResults += 1;
         }
     }
 
@@ -99,14 +102,15 @@ void algorithm(Image im1, Image im2){
 
 
 int main(){
-    printf("INICIO PRIMERA LECTURA\n");
-    Image im1 = readBMP(f1);
-    printf("PASANDO A LA SEGUNDA LECTURA\n");
+    Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
-    printf("FINALIZANDO LA SEGUNDA LECTURA\n");
     
-    printf("ESTOY EMPEZANDO LA EJECUCION\n");
+    clock_t begin = clock();
     algorithm(im1,im2);
-    printf("FINISHED");
+    clock_t end = clock();
+
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    printf("%.6f", elapsed_secs);
+
     return 0;
 }
