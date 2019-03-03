@@ -6,15 +6,6 @@
 
 using namespace std;
 
-
-
-
-
-
-
-
-
-
 /**
  * Extraído de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
  * */

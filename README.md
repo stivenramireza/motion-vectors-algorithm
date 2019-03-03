@@ -4,13 +4,9 @@
     Sebastián Ospina Cabarcas - sospin26@eafit.edu.co
     Camilo Suaza Gallego - csuazag@eafit.edu.co
 
+# 1. Algoritmo Serial
 
-
-![Monting Vectors Algorithm](algoritmo.jpeg?raw=true "Motion Vectors Algorithm")
-
-# 1. Algoritmo Secuencial
-
-* [Algoritmo Secuencial](algoritmo-secuencial.md)
+* [Algoritmo Serial](algoritmo-serial.md)
 
 # 2. Algoritmo Paralelo con OpenMP
 
