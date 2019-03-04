@@ -1,7 +1,9 @@
 #Makefile generico tomado de https://spin.atomicobject.com/2016/08/26/makefile-c-projects/
 TARGET_EXEC ?= main.out
 CC = g++
-CC_FLAGS = -qopenmp
+CC_FLAGS = -fopenmp
+ENDFLAGS = -fopenmp
+CXXFLAGS = -O3
 BUILD_DIR ?= ./build
 SRC_DIRS ?= ./src
 SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
@@ -29,7 +31,7 @@ $(BUILD_DIR)/%.c.o: %.c
 # c++ source
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	$(MKDIR_P) $(dir $@)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ $(ENDFLAGS)
 
 clean:
 	$(RM) -r $(BUILD_DIR)
