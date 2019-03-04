@@ -1,7 +1,7 @@
 #Makefile generico tomado de https://spin.atomicobject.com/2016/08/26/makefile-c-projects/
 TARGET_EXEC ?= main.out
 CC = g++
-CC_FLAGS = 
+CC_FLAGS = -qopenmp
 BUILD_DIR ?= ./build
 SRC_DIRS ?= ./src
 SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
