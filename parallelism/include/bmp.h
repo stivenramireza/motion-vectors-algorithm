@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include <ctime>
+#include <omp.h>
+#include <cstdio>
 
 #define getIndex(row, col, NCOLS)(row*NCOLS+col)
 

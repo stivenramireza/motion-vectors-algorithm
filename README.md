@@ -4,22 +4,18 @@
     Sebastián Ospina Cabarcas - sospin26@eafit.edu.co
     Camilo Suaza Gallego - csuazag@eafit.edu.co
 
+# 1. Algoritmo Serial
 
-
-![Monting Vectors Algorithm](algoritmo.jpeg?raw=true "Motion Vectors Algorithm")
-
-# 1. Algoritmo Secuencial
-
-* [Algoritmo Secuencial](algoritmo-secuencial.md)
+* [Algoritmo Serial](serial.md)
 
 # 2. Algoritmo Paralelo con OpenMP
 
-* [Algoritmo Paralelo con OpenMP](algoritmo-paralelo-openmp.md)
+* [Algoritmo Paralelo con OpenMP](openmp.md)
 
 # 3. Algoritmo Paralelo con MPI
 
-* [Algoritmo Paralelo con MPI](algoritmo-paralelo-mpi.md)
+* [Algoritmo Paralelo con MPI](mpi.md)
 
 # 4. Algoritmo Paralelo con OpenMP y MPI (PCAM)
 
-* [Algoritmo Paralelo con OpenMP y MPI (PCAM)](algoritmo-paralelo-openmp-mpi.md)
+* [Algoritmo Paralelo con OpenMP y MPI (PCAM)](pcam.md)
