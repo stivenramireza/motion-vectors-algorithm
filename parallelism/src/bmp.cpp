@@ -1,6 +1,8 @@
 
 
 #include "../include/bmp.h"
+#include <omp.h>
+#include <cstdio>
 
 using namespace std;
 
@@ -47,41 +49,55 @@ Image readBMP(const char* filename){
 
 
 void algorithm(Image im1, Image im2){
-    
+
     int indexResults = 0;
     ValueResult* result[(im1.height/16) * (im1.width/16)];
-    
-    for(int i = 0; i < im1.height;i+=16){
-        for(int j = 0; j < im1.width; j+=16){
+    //int i,j,u,l,k,y, summation;
 
-            ValueResult* dataFrame = new ValueResult();
-            dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
-            
-            for(int u = 0; u < im2.height-16; u++){
-                for(int l = 0; l < im2.width-16 ; l++){
+    //#pragma omp parallel shared (im1 , im2, result, indexResults) private (i,j,u,l,k,y, summation)            
+    #pragma omp parallel
+    {
+        int i,j,u,l,k,y, summation;
+        printf("I'm thread #: %d\n", omp_get_thread_num());
 
-                    int summation = 0;
-                    for(int k = 0; k < 16; k++){
-                        for(int y = 0; y < 16; y++){
-                            summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
+        //#pragma omp for        
+        //for(i = 0; i < im1.height;i+=16){
+        ////printf("I'm thread #: %d\n", omp_get_thread_num());
+            for(j = 0; j < im1.width; j+=16){
+                ValueResult* dataFrame = new ValueResult();
+                dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
+                
+                for(u = 0; u < im2.height-16; u++){
+                    for(l = 0; l < im2.width-16 ; l++){
+
+                        summation = 0;
+
+                        for(k = 0; k < 16; k++){
+                            for(y = 0; y < 16; y++){
+                                summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
+                            }
+                        }
+                        
+                        if(summation < dataFrame->minimum){
+                            dataFrame->minimum = summation;
+                            dataFrame->iFrame1 = i;
+                            dataFrame->jFrame1 = j;
+                            dataFrame->iFrame2 = u;
+                            dataFrame->jFrame2 = l;           
+
+                            if(summation == 0) goto endFrame2;
                         }
                     }
-                    
-                    if(summation < dataFrame->minimum){
-                        dataFrame->minimum = summation;
-                        dataFrame->iFrame1 = i;
-                        dataFrame->jFrame1 = j;
-                        dataFrame->iFrame2 = u;
-                        dataFrame->jFrame2 = l;           
+                }
+                endFrame2:
 
-                        if(summation == 0) goto endFrame2;
-                    }
+                #pragma omp critical
+                {
+                    result[indexResults] = dataFrame;
+                    indexResults += 1;
                 }
             }
-            endFrame2:
-            result[indexResults] = dataFrame;
-            indexResults += 1;
-        }
+        //}
     }
 }
 
@@ -90,8 +106,14 @@ int main(){
     const char *f1 = "../imagenes/frame1.bmp";
     const char *f2 = "../imagenes/frame2.bmp";
 
+    const int nt=omp_get_max_threads();
+    printf("OpenMP with %d threads\n", nt);
+
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
+
+    printf("ya lei imagenes\n");
+
     
     clock_t begin = clock();
     algorithm(im1,im2);
@@ -99,7 +121,7 @@ int main(){
 
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
-    printf("The time in serial is %.6f minutes", elapsed_secs/60);
+    printf("The time in parallel is %.6f minutes", elapsed_secs/60);
 
     return 0;
 }
