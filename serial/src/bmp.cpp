@@ -53,8 +53,8 @@ void algorithm(Image im1, Image im2){
             ValueResult* dataFrame = new ValueResult();
             dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
             
-            for(int u = 0; u < im2.height-16; u++){
-                for(int l = 0; l < im2.width-16 ; l++){
+            for(int u = 0; u < im2.height; u++){
+                for(int l = 0; l < im2.width ; l++){
 
                     int summation = 0;
                     for(int k = 0; k < 16; k++){
@@ -104,6 +104,13 @@ int main(){
 
     clock_t begin = clock();
     algorithm(im1,im2);
+    for(int i = 0; i < im1.height; i++){
+        printf("[");
+        for(int j = 0; j < im1.width; j++){
+            printf(" %i",im1.arrayOfPixels[getIndex(i,j,im1.width)]);
+        }
+        printf("]\n");
+    }
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
