@@ -13,8 +13,10 @@ public:
 };
 
 typedef struct ValueResult{
-    int iFrame1,jFrame1, iFrame2, jFrame2, minimum;
+    int iFrame2, jFrame2, minimum;
 } ValueResult;
+
+void algorithm(Image im1, Image im2);
 
 
 Image readBMP(char* filename);

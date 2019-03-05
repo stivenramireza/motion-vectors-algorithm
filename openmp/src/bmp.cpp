@@ -3,13 +3,11 @@
 #include <omp.h>
 #include <cstdio>
 
-using namespace std;
 
 /**
  * Extraído de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
  * */
-Image readBMP(const char* filename){
-    
+Image readBMP(const char* filename){    
     
     FILE* f = fopen(filename, "rb");
     unsigned char info[54];
@@ -25,7 +23,7 @@ Image readBMP(const char* filename){
 
     unsigned short int  bits = *(short *) &info[28];
     if(bits != 8){
-        printf("Error, The image have to be of 8 Bits");
+        printf("Error, The image has to be of 8 Bits");
         exit (EXIT_FAILURE);
     }
     
@@ -46,23 +44,17 @@ Image readBMP(const char* filename){
 }
 
 
-
 void algorithm(Image im1, Image im2){
+    
+    ValueResult* matrixResults[im1.height/16][im1.width/16];
 
-    int indexResults = 0;
-    ValueResult* result[(im1.height/16) * (im1.width/16)];
-    //int i,j,u,l,k,y, summation;
+    #pragma omp parallel{
+        int i,j,u,l,summation,k,y;
 
-    //#pragma omp parallel shared (im1 , im2, result, indexResults) private (i,j,u,l,k,y, summation)            
-    #pragma omp parallel
-    {
-        int i,j,u,l,k,y, summation;
-        printf("I'm thread #: %d\n", omp_get_thread_num());
-
-        //#pragma omp for        
-        //for(i = 0; i < im1.height;i+=16){
-        ////printf("I'm thread #: %d\n", omp_get_thread_num());
+        #pragma omp for
+        for(i = 0; i < im1.height;i+=16){
             for(j = 0; j < im1.width; j+=16){
+
                 ValueResult* dataFrame = new ValueResult();
                 dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
                 
@@ -70,7 +62,6 @@ void algorithm(Image im1, Image im2){
                     for(l = 0; l < im2.width-16 ; l++){
 
                         summation = 0;
-
                         for(k = 0; k < 16; k++){
                             for(y = 0; y < 16; y++){
                                 summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
@@ -79,8 +70,6 @@ void algorithm(Image im1, Image im2){
                         
                         if(summation < dataFrame->minimum){
                             dataFrame->minimum = summation;
-                            dataFrame->iFrame1 = i;
-                            dataFrame->jFrame1 = j;
                             dataFrame->iFrame2 = u;
                             dataFrame->jFrame2 = l;           
 
@@ -88,39 +77,45 @@ void algorithm(Image im1, Image im2){
                         }
                     }
                 }
-                endFrame2:
-
-                #pragma omp critical
-                {
-                    result[indexResults] = dataFrame;
-                    indexResults += 1;
-                }
+                endFrame2:  
+                matrixResults[i/16][j/16] = dataFrame;
             }
-        //}
+        }  
     }
+    
+    
+
+    printf("Matrix Results\n");
+    for(int i = 0; i < im1.height/16;i++){
+        printf("[");
+        for(int j = 0; j < im1.width/16; j++){
+            printf(" %i",matrixResults[i][j]->minimum);
+        }
+        printf("]\n");
+    }
+        
 }
+
 
 
 int main(){
     const char *f1 = "../imagenes/frame1.bmp";
     const char *f2 = "../imagenes/frame2.bmp";
 
-    const int nt=omp_get_max_threads();
-    printf("OpenMP with %d threads\n", nt);
-
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
 
-    printf("ya lei imagenes\n");
+    if((im1.width != im2.width) && (im1.height != im2.height)){
+        printf("Error, The images have to be with the same width and height, Try with other images");
+        exit (EXIT_FAILURE);
+    }
 
-    
     clock_t begin = clock();
     algorithm(im1,im2);
     clock_t end = clock();
-
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
-    printf("The time in parallel is %.6f minutes", elapsed_secs/60);
+    printf("The time in serial is %.6f minutes", elapsed_secs/60);
 
     return 0;
 }

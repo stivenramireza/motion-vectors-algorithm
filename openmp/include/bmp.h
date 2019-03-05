@@ -16,7 +16,7 @@ public:
 };
 
 typedef struct ValueResult{
-    int iFrame1,jFrame1, iFrame2, jFrame2, minimum;
+    int iFrame2, jFrame2, minimum;
 } ValueResult;
 
 
