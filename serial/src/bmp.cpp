@@ -92,7 +92,7 @@ void algorithm(Image im1, Image im2){
 
 int main(){
     const char *f1 = "../imagenes/frame1.bmp";
-    const char *f2 = "../imagenes/frame1.bmp";
+    const char *f2 = "../imagenes/frame2.bmp";
 
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
@@ -104,13 +104,6 @@ int main(){
 
     clock_t begin = clock();
     algorithm(im1,im2);
-    for(int i = 0; i < im1.height; i++){
-        printf("[");
-        for(int j = 0; j < im1.width; j++){
-            printf(" %i",im1.arrayOfPixels[getIndex(i,j,im1.width)]);
-        }
-        printf("]\n");
-    }
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
