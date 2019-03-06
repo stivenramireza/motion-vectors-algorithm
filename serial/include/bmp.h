@@ -3,7 +3,7 @@
 #include <iostream>
 #include <ctime>
 
-#define getIndex(row, col, NCOLS)(row*NCOLS+col)
+#define getIndex(row, col, NCOLS)((row)*(NCOLS)+(col))
 
 class Image {
 public:
