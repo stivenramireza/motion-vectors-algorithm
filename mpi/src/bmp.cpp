@@ -120,10 +120,13 @@ int main(int argc, char *argv[]){
         printf("Error, The images have to be with the same width and height, Try with other images");
         exit (EXIT_FAILURE);
     }
-
+	if(taskId == MASTER){
     clock_t begin = clock();
     algorithm(im1,im2);
     clock_t end = clock();
+	}else{
+		
+	}
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
     printf("The time in MPI is %.6f minutes", elapsed_secs/60);
