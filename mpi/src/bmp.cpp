@@ -61,10 +61,10 @@ void algorithm(Image im1, Image im2){
 
         int i,j,u,l,summation,k,y;
 
-        #pragma omp for
         for(i = 0; i < im1.height;i+=16){
             for(j = 0; j < im1.width; j+=16){
-
+				MPI_Send(&matrixResults, 0, MPI_INT, i,
+						FROM_MASTER, MPI_COMM_WORLD);
                 ValueResult* dataFrame = new ValueResult();
                 dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
                 
