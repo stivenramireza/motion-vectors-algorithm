@@ -59,7 +59,6 @@ void algorithm(Image im1, Image im2){
     
     ValueResult* matrixResults[im1.height/16][im1.width/16];
 
-    #pragma omp parallel{
         int i,j,u,l,summation,k,y;
 
         #pragma omp for
@@ -92,10 +91,6 @@ void algorithm(Image im1, Image im2){
                 matrixResults[i/16][j/16] = dataFrame;
             }
         }  
-    }
-    
-    
-
     printf("Matrix Results\n");
     for(int i = 0; i < im1.height/16;i++){
         printf("[");
@@ -131,7 +126,7 @@ int main(int argc, char *argv[]){
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
-    printf("The time in serial is %.6f minutes", elapsed_secs/60);
+    printf("The time in MPI is %.6f minutes", elapsed_secs/60);
 
     return 0;
 }
