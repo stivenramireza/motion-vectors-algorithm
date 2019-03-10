@@ -1,7 +1,7 @@
 #include "../include/bmp.h"
 #include <omp.h>
 #include <cstdio>
-#include <mpi.h>
+#include <mpi.h>   
 #include <math.h>
 #define MASTER 0
 #define FROM_MASTER 1
@@ -56,28 +56,35 @@ Image readBMP(const char* filename){
 
 
 void algorithm(Image im1, Image im2){
-    
     ValueResult* matrixResults[im1.height/16][im1.width/16];
-
         int i,j,u,l,summation,k,y;
-
+        long nextWorker;
         for(i = 0; i < im1.height;i+=16){
+            nextWorker = nextWorker(); 
+            MPI_Send(&i, 1, MPI_INT, nextWorker, FROM_MASTER, MPI_COMM_WORLD); // dest = worker 1
             for(j = 0; j < im1.width; j+=16){
-				MPI_Send(&matrixResults, 0, MPI_INT, i,
-						FROM_MASTER, MPI_COMM_WORLD);
+                MPI_Send(&j, 1, MPI_INT, nextWorker, FROM_MASTER, MPI_COMM_WORLD); // dest = worker 1
                 ValueResult* dataFrame = new ValueResult();
                 dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
-                
                 for(u = 0; u < im2.height-16; u++){
+                    nextWorker = nextWorker();
+                    MPI_Send(&u, 1, MPI_INT, nextWorker, FROM_WORKER, MPI_COMM_WORLD); // dest = worker 2
                     for(l = 0; l < im2.width-16 ; l++){
-
+                        MPI_Send(&l, 1, MPI_INT, nextWorker, FROM_WORKER, MPI_COMM_WORLD); // dest = worker 2
                         summation = 0;
+                        MPI_Send(&summation, 1, MPI_INT, nextWorker, FROM_WORKER, MPI_COMM_WORLD);
                         for(k = 0; k < 16; k++){
                             for(y = 0; y < 16; y++){
+                                MPI_Recv(&summation, 1, MPI_INT, nextWorker, FROM_WORKER, MPI_COMM_WORLD, &status); // source = worker 1
+                                MPI_Recv(&u, 1, MPI_INT, nextWorker, FROM_WORKER, MPI_COMM_WORLD, &status); // source = worker 1
+                                MPI_Recv(&l, 1, MPI_INT, nextWorker, FROM_WORKER, MPI_COMM_WORLD, &status); // source = worker 1
+                                MPI_Recv(&i, 1, MPI_INT, MASTER, FROM_MASTER, MPI_COMM_WORLD, &status); // source = master
+                                MPI_Recv(&j, 1, MPI_INT, MASTER, FROM_MASTER, MPI_COMM_WORLD, &status); // source = master
                                 summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
+                                MPI_Send(&summation, 1, MPI_INT, MASTER, FROM_WORKER, MPI_COMM_WORLD); // dest = master
                             }
                         }
-                        
+                        MPI_Recv(&summation, 1, MPI_INT, MASTER, FROM_WORKER, MPI_COMM_WORLD, &status); // source = worker 2
                         if(summation < dataFrame->minimum){
                             dataFrame->minimum = summation;
                             dataFrame->iFrame2 = u;
@@ -102,7 +109,12 @@ void algorithm(Image im1, Image im2){
         
 }
 
-
+int nextWorker(){
+	if (currentWorker >= numWorkers)
+		currentWorker = 0;
+	currentWorker++;
+	return currentWorker;
+}
 
 int main(int argc, char *argv[]){
     const char *f1 = "../imagenes/frame1.bmp";
@@ -111,25 +123,21 @@ int main(int argc, char *argv[]){
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
 
-	MPI_Init(&argc, &argv);	// parametros del main()		
+    if((im1.width != im2.width) && (im1.height != im2.height)){	
+        printf("Error, The images have to be with the same width and height. Try with other images");
+        exit (EXIT_FAILURE);
+    }
+
+    MPI_Init(&argc, &argv);	// parametros del main()		
 	MPI_Comm_rank(MPI_COMM_WORLD, &taskId); // identificador de tareas del comunicador universal
 	MPI_Comm_size(MPI_COMM_WORLD, &numTasks); // numero de tareas del comunicador universal
 	numWorkers = numTasks - 1; // numero de esclavos
+    double start = MPI_Wtime();
 
-    if((im1.width != im2.width) && (im1.height != im2.height)){	
-        printf("Error, The images have to be with the same width and height, Try with other images");
-        exit (EXIT_FAILURE);
-    }
 	if(taskId == MASTER){
-    clock_t begin = clock();
-    algorithm(im1,im2);
-    clock_t end = clock();
-	}else{
-		
+        algorithm(im1,im2);
+        printf("Tiempo total en MPI: %lf\n", MPI_Wtime() - start);
 	}
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    
-    printf("The time in MPI is %.6f minutes", elapsed_secs/60);
-
+    MPI_Finalize();
     return 0;
 }

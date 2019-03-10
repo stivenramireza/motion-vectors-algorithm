@@ -18,5 +18,4 @@ typedef struct ValueResult{
 
 void algorithm(Image im1, Image im2);
 
-
 Image readBMP(char* filename);
