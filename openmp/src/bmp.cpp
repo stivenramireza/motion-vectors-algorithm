@@ -48,22 +48,21 @@ void algorithm(Image im1, Image im2){
     
     ValueResult* matrixResults[im1.height/16][im1.width/16];
 
-    #pragma omp parallel{
-        int i,j,u,l,summation,k,y;
-
+    #pragma omp parallel 
+    {
         #pragma omp for
-        for(i = 0; i < im1.height;i+=16){
-            for(j = 0; j < im1.width; j+=16){
-
+        for(int i = 0; i < im1.height;i+=16){
+            for(int j = 0; j < im1.width; j+=16){
                 ValueResult* dataFrame = new ValueResult();
                 dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
                 
-                for(u = 0; u < im2.height-16; u++){
-                    for(l = 0; l < im2.width-16 ; l++){
+                for(int u = 0; u < im2.height; u++){
+                    bool flagBreak = false;
+                    for(int l = 0; l < im2.width ; l++){
 
-                        summation = 0;
-                        for(k = 0; k < 16; k++){
-                            for(y = 0; y < 16; y++){
+                        int summation = 0;
+                        for(int k = 0; k < 16; k++){
+                            for(int y = 0; y < 16; y++){
                                 summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
                             }
                         }
@@ -74,13 +73,14 @@ void algorithm(Image im1, Image im2){
                             dataFrame->jFrame2 = l;           
 
                             if(summation == 0) goto endFrame2;
-                        }
                     }
                 }
-                endFrame2:  
-                matrixResults[i/16][j/16] = dataFrame;
             }
-        }  
+            endFrame2:  
+            matrixResults[i/16][j/16] = dataFrame;
+        }
+    
+    }
     }
     
     
@@ -100,7 +100,7 @@ void algorithm(Image im1, Image im2){
 
 int main(){
     const char *f1 = "../imagenes/frame1.bmp";
-    const char *f2 = "../imagenes/frame2.bmp";
+    const char *f2 = "../imagenes/frame1.bmp";
 
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
