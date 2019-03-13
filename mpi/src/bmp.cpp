@@ -140,7 +140,7 @@ int main(int argc, char *argv[]){
         MPI_Recv(&widthim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&im1ArrayP, macroPerN*macroblockSize, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&im2ArrayP, heightim2*widthim2, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        printf("recibido macroperN: %i en el hilo: %i\n",macroPerN,taskid);
+        printf("recibido macroperN: en el hilo: %i\n",taskid);
     }   
 
     

@@ -92,7 +92,7 @@ void algorithm(Image im1, Image im2){
 
 int main(){
     const char *f1 = "../imagenes/frame1.bmp";
-    const char *f2 = "../imagenes/frame2.bmp";
+    const char *f2 = "../imagenes/frame1.bmp";
 
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
