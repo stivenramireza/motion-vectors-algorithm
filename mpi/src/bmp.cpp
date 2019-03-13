@@ -108,12 +108,13 @@ int main(int argc, char *argv[]){
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
-    macroblockSize = 16*16;
+    
     if (taskid == 0) {//master space
         total = im1.height*im1.width;
         totalMacroBlock = (im1.height/16)*(im1.width/16);
         macroPerN = ceil( totalMacroBlock/numtasks);
         extraMacroBlock = totalMacroBlock - macroPerN*numtasks ; //extra iterations
+        macroblockSize = 16*16;
         for(int dest = 1; dest < numtasks; dest++){
             MPI_Send(&macroPerN, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im1.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
@@ -132,12 +133,14 @@ int main(int argc, char *argv[]){
         int *im1ArrayP;
         int *im2ArrayP;
         MPI_Status status;
-
+        macroblockSize = 16*16;
         MPI_Recv(&macroPerN, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&heightim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&widthim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&heightim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&widthim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        printf("recibido macroperN: en el hilo: %i\n",macroPerN,taskid);
+        
         MPI_Recv(&im1ArrayP, macroPerN*macroblockSize, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&im2ArrayP, heightim2*widthim2, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         printf("recibido macroperN: en el hilo: %i\n",taskid);
