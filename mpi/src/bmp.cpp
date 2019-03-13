@@ -1,23 +1,13 @@
+
 #include "../include/bmp.h"
-#include <omp.h>
-#include <cstdio>
-#include <mpi.h>   
-#include <math.h>
-#define MASTER 0
-#define FROM_MASTER 1
-#define FROM_WORKER 2
+#include "mpi.h"
+#include "math.h"
 
 using namespace std;
 
-int taskId,
-	numTasks,
-	numWorkers,
-	sourceId,
-	destId,
-	currentWorker = 0;
-
-MPI_Status status;
-
+/**
+ * Extraído de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
+ * */
 Image readBMP(const char* filename){    
     
     FILE* f = fopen(filename, "rb");
@@ -56,46 +46,39 @@ Image readBMP(const char* filename){
 
 
 void algorithm(Image im1, Image im2){
+    
     ValueResult* matrixResults[im1.height/16][im1.width/16];
-        int i,j,u,l,summation,k,y;
-        int nextW;
-        for(i = 0; i < im1.height;i+=16){
-            nextW = nextWorker(); 
-            MPI_Send(&i, 1, MPI_INT, nextW, FROM_MASTER, MPI_COMM_WORLD); // dest = worker 1
-            for(j = 0; j < im1.width; j+=16){
-                MPI_Send(&j, 1, MPI_INT, nextW, FROM_MASTER, MPI_COMM_WORLD); // dest = worker 1
-                ValueResult* dataFrame = new ValueResult();
-                dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
-                for(u = 0; u < im2.height-16; u++){
-                    nextW = nextWorker();
-                    MPI_Send(&u, 1, MPI_INT, nextW, FROM_WORKER, MPI_COMM_WORLD); // dest = worker 2
-                    for(l = 0; l < im2.width-16 ; l++){
-                        MPI_Send(&l, 1, MPI_INT, nextW, FROM_WORKER, MPI_COMM_WORLD); // dest = worker 2
-                        summation = 0;
-                        MPI_Recv(&u, 1, MPI_INT, nextW, FROM_WORKER, MPI_COMM_WORLD, &status); // source = worker 1
-                        MPI_Recv(&l, 1, MPI_INT, nextW, FROM_WORKER, MPI_COMM_WORLD, &status); // source = worker 1
-                        MPI_Recv(&i, 1, MPI_INT, MASTER, FROM_MASTER, MPI_COMM_WORLD, &status); // source = master
-                        MPI_Recv(&j, 1, MPI_INT, MASTER, FROM_MASTER, MPI_COMM_WORLD, &status); // source = master
-                        for(k = 0; k < 16; k++){
-                            for(y = 0; y < 16; y++){
-                                summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
-                                MPI_Send(&summation, 1, MPI_INT, nextW, FROM_WORKER, MPI_COMM_WORLD); // dest = worker 2
-                            }
-                        }
-                        MPI_Recv(&summation, 1, MPI_INT, MASTER, FROM_MASTER, MPI_COMM_WORLD, &status); // source = worker 2
-                        if(summation < dataFrame->minimum){
-                            dataFrame->minimum = summation;
-                            dataFrame->iFrame2 = u;
-                            dataFrame->jFrame2 = l;          
-                             
-                            if(summation == 0) goto endFrame2;
+    
+    for(int i = 0; i < im1.height;i+=16){
+        for(int j = 0; j < im1.width; j+=16){
+
+            ValueResult* dataFrame = new ValueResult();
+            dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
+            
+            for(int u = 0; u < im2.height; u++){
+                for(int l = 0; l < im2.width ; l++){
+
+                    int summation = 0;
+                    for(int k = 0; k < 16; k++){
+                        for(int y = 0; y < 16; y++){
+                            summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
                         }
                     }
+                    
+                    if(summation < dataFrame->minimum){
+                        dataFrame->minimum = summation;
+                        dataFrame->iFrame2 = u;
+                        dataFrame->jFrame2 = l;           
+
+                        if(summation == 0) goto endFrame2;
+                    }
                 }
-                endFrame2:  
-                matrixResults[i/16][j/16] = dataFrame;
             }
-        }  
+            endFrame2:  
+            matrixResults[i/16][j/16] = dataFrame;
+        }
+    }
+
     printf("Matrix Results\n");
     for(int i = 0; i < im1.height/16;i++){
         printf("[");
@@ -107,35 +90,60 @@ void algorithm(Image im1, Image im2){
         
 }
 
-int nextWorker(){
-	if (currentWorker >= numWorkers)
-		currentWorker = 0;
-	currentWorker++;
-	return currentWorker;
-}
+
 
 int main(int argc, char *argv[]){
     const char *f1 = "../imagenes/frame1.bmp";
-    const char *f2 = "../imagenes/frame2.bmp";
+    const char *f2 = "../imagenes/frame1.bmp";
 
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
 
-    if((im1.width != im2.width) && (im1.height != im2.height)){	
-        printf("Error, The images have to be with the same width and height. Try with other images");
+    if((im1.width != im2.width) && (im1.height != im2.height)){
+        printf("Error, The images have to be with the same width and height, Try with other images");
         exit (EXIT_FAILURE);
     }
 
-    MPI_Init(&argc, &argv);	// parametros del main()		
-	MPI_Comm_rank(MPI_COMM_WORLD, &taskId); // identificador de tareas del comunicador universal
-	MPI_Comm_size(MPI_COMM_WORLD, &numTasks); // numero de tareas del comunicador universal
-	numWorkers = numTasks - 1; // numero de esclavos
-    double start = MPI_Wtime();
+    int taskid,numtasks,total,totalMacroBlock,macroblockSize,macroPerN,extraMacroBlock;
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
+    MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
+    macroblockSize = 16*16;
+    if (taskid == 0) {//master space
+        total = im1.height*im1.width;
+        totalMacroBlock = (im1.height/16)*(im1.width/16);
+        macroPerN = ceil( totalMacroBlock/numtasks);
+        extraMacroBlock = totalMacroBlock - macroPerN*numtasks ; //extra iterations
+        for(int dest = 1; dest < numtasks; dest++){
+            MPI_Send(&macroPerN, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(&im1.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(&im1.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(&im2.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(&im2.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(&im1.arrayOfPixels[macroPerN*dest*macroblockSize],macroPerN*macroblockSize ,MPI_INT, dest,1,  MPI_COMM_WORLD);
+            MPI_Send(&im2.arrayOfPixels, im2.height*im2.width, MPI_INT, dest, 1, MPI_COMM_WORLD);
+        }
 
-	if(taskId == MASTER){
-        algorithm(im1,im2);
-        printf("Tiempo total en MPI: %lf\n", MPI_Wtime() - start);
-	}
-    MPI_Finalize();
+    }
+
+    if(taskid != 0){ // slaves
+        int source = 0;
+        int heightim1,widthim1,heightim2,widthim2;
+        int *im1ArrayP;
+        int *im2ArrayP;
+        MPI_Status status;
+
+        MPI_Recv(&macroPerN, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&heightim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&widthim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&heightim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&widthim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&im1ArrayP, macroPerN*macroblockSize, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&im2ArrayP, heightim2*widthim2, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        printf("recibido macroperN: %i en el hilo: %i\n",macroPerN,taskid);
+    }   
+
+    
+
     return 0;
 }
