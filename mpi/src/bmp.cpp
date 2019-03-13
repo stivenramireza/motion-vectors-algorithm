@@ -106,7 +106,7 @@ int main(int argc, char *argv[]){
 
     int taskid,numtasks,total,totalMacroBlock,macroblockSize,macroPerN,extraMacroBlock;
     int N = im1.height*im1.width;
-    char im1Array[N],im2Array[N];
+    
     MPI_Init(&argc, &argv);
     
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
@@ -125,7 +125,8 @@ int main(int argc, char *argv[]){
             MPI_Send(&im1.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
-            MPI_Send(im1.arrayOfPixels, N, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(&im1.arrayOfPixels[macroPerN*dest], macroPerN, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(im2.arrayOfPixels, N, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
         }
 
     }
@@ -133,10 +134,9 @@ int main(int argc, char *argv[]){
     if(taskid > 0){ // slaves
         int source = 0;
         int heightim1,widthim1,heightim2,widthim2;
-        int *im1ArrayP;
-        int *im2ArrayP;
         MPI_Status status;
         macroblockSize = 16*16;
+        char im2Array[N];
         MPI_Recv(&macroPerN, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&heightim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&widthim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
@@ -144,9 +144,11 @@ int main(int argc, char *argv[]){
         MPI_Recv(&widthim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         
         printf("recibido macroperN: %i\n",macroPerN);
-        MPI_Recv(im1Array, N, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
-        
-        printf("recibido en el hilo: %i primera posicion: %i \n",taskid,im1Array[0]);
+        char im1Array[macroPerN*macroblockSize];
+        MPI_Recv(im1Array, macroPerN, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(im2Array, N, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
+        printf("primer valor: %i por hilo: %i\n",im1Array[0],taskid);
+        printf("tamaño de array de macrobloques: %i tamaño de frame2: %i\n",(sizeof(im1Array)/sizeof(*im1Array)),(sizeof(im2Array)/sizeof(*im2Array)));
     }   
 
     
