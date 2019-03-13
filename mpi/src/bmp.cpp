@@ -105,7 +105,10 @@ int main(int argc, char *argv[]){
     }
 
     int taskid,numtasks,total,totalMacroBlock,macroblockSize,macroPerN,extraMacroBlock;
+    int N = im1.height*im1.width;
+    char im1Array[N],im2Array[N];
     MPI_Init(&argc, &argv);
+    
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
     
@@ -115,19 +118,19 @@ int main(int argc, char *argv[]){
         macroPerN = ceil( totalMacroBlock/numtasks);
         extraMacroBlock = totalMacroBlock - macroPerN*numtasks ; //extra iterations
         macroblockSize = 16*16;
+        printf(" primera posicion: %i \n",im1.arrayOfPixels[0]);
         for(int dest = 1; dest < numtasks; dest++){
             MPI_Send(&macroPerN, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im1.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im1.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
-            MPI_Send(&im1.arrayOfPixels[macroPerN*dest*macroblockSize],macroPerN*macroblockSize ,MPI_INT, dest,1,  MPI_COMM_WORLD);
-            MPI_Send(&im2.arrayOfPixels, im2.height*im2.width, MPI_INT, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(im1.arrayOfPixels, N, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
         }
 
     }
 
-    if(taskid != 0){ // slaves
+    if(taskid > 0){ // slaves
         int source = 0;
         int heightim1,widthim1,heightim2,widthim2;
         int *im1ArrayP;
@@ -139,14 +142,14 @@ int main(int argc, char *argv[]){
         MPI_Recv(&widthim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&heightim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&widthim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        printf("recibido macroperN: en el hilo: %i\n",macroPerN,taskid);
         
-        MPI_Recv(&im1ArrayP, macroPerN*macroblockSize, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        MPI_Recv(&im2ArrayP, heightim2*widthim2, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        printf("recibido macroperN: en el hilo: %i\n",taskid);
+        printf("recibido macroperN: %i\n",macroPerN);
+        MPI_Recv(im1Array, N, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
+        
+        printf("recibido en el hilo: %i primera posicion: %i \n",taskid,im1Array[0]);
     }   
 
     
-
+    MPI_Finalize();
     return 0;
 }
