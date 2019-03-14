@@ -2,7 +2,7 @@
 TARGET_EXEC ?= main.out
 CC = g++
 CC_FLAGS = 
-CXXFLAGS = -O3
+CXXFLAGS = 
 BUILD_DIR ?= ./build
 SRC_DIRS ?= ./src
 SRCS := $(shell find $(SRC_DIRS) -name *.cpp -or -name *.c -or -name *.s)
