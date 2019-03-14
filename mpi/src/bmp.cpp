@@ -129,7 +129,7 @@ int main(int argc, char *argv[]){
             MPI_Send(&im2.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             printf("dest %i \n",dest);
-            MPI_Send(&im1.arrayOfPixels[macroPerN*macroblockSize], macroPerN*macroblockSize, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
+            MPI_Send(&im1.arrayOfPixels[macroPerN*macroblockSize*dest], macroPerN*macroblockSize, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
 
             MPI_Send(im2.arrayOfPixels, N, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
         }
