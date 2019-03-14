@@ -53,8 +53,8 @@ void algorithm(Image im1, Image im2){
             ValueResult* dataFrame = new ValueResult();
             dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
             
-            for(int u = 0; u < im2.height; u++){
-                for(int l = 0; l < im2.width ; l++){
+            for(int u = 0; u <= im2.height-16; u++){
+                for(int l = 0; l <= im2.width-16; l++){
 
                     int summation = 0;
                     for(int k = 0; k < 16; k++){

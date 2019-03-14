@@ -50,15 +50,15 @@ void algorithm(Image im1, Image im2){
 
     #pragma omp parallel 
     {
-        #pragma omp for
+        #pragma omp for schedule(dynamic)
         for(int i = 0; i < im1.height;i+=16){
+            printf("Soy el hilo %d ----> IT: %d\n", omp_get_thread_num(), i);
             for(int j = 0; j < im1.width; j+=16){
                 ValueResult* dataFrame = new ValueResult();
                 dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
                 
-                for(int u = 0; u < im2.height; u++){
-                    bool flagBreak = false;
-                    for(int l = 0; l < im2.width ; l++){
+                for(int u = 0; u <= im2.height-16; u++){
+                    for(int l = 0; l <= im2.width-16 ; l++){
 
                         int summation = 0;
                         for(int k = 0; k < 16; k++){
@@ -72,27 +72,30 @@ void algorithm(Image im1, Image im2){
                             dataFrame->iFrame2 = u;
                             dataFrame->jFrame2 = l;           
 
-                            if(summation == 0) goto endFrame2;
+                            if(summation == 0){
+                                u = im2.height;
+                                l = im2.width;
+                            }
+                        }
                     }
                 }
+                matrixResults[i/16][j/16] = dataFrame;
             }
-            endFrame2:  
-            matrixResults[i/16][j/16] = dataFrame;
-        }
+            
     
-    }
+        }
     }
     
     
 
-    printf("Matrix Results\n");
-    for(int i = 0; i < im1.height/16;i++){
-        printf("[");
-        for(int j = 0; j < im1.width/16; j++){
-            printf(" %i",matrixResults[i][j]->minimum);
-        }
-        printf("]\n");
-    }
+    //printf("Matrix Results\n");
+    //for(int i = 0; i < im1.height/16;i++){
+    //    printf("[");
+    //    for(int j = 0; j < im1.width/16; j++){
+    //        printf(" %i",matrixResults[i][j]->minimum);
+    //    }
+    //    printf("]\n");
+    //}
         
 }
 
@@ -100,7 +103,7 @@ void algorithm(Image im1, Image im2){
 
 int main(){
     const char *f1 = "../imagenes/frame1.bmp";
-    const char *f2 = "../imagenes/frame1.bmp";
+    const char *f2 = "../imagenes/frame2.bmp";
 
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
@@ -115,7 +118,7 @@ int main(){
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
-    printf("The time in serial is %.6f minutes", elapsed_secs/60);
+    printf("The time in openmp is %.6f minutes", elapsed_secs/60);
 
     return 0;
 }
