@@ -45,26 +45,26 @@ Image readBMP(const char* filename){
 }
 
 
-void algorithm(Image im1, Image im2){
+void algorithm(unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,unsigned char* frame2, int frame2H, int frame2W, int taskId){
     
-    ValueResult* matrixResults[im1.height/16][im1.width/16];
+
     
-    for(int i = 0; i < im1.height;i+=16){
-        for(int j = 0; j < im1.width; j+=16){
+    int getout = 0;
+    for(int i = 0; i < frame1H;i+=16){
+        for(int j = 0; j < frame1W; j+=16){
 
             ValueResult* dataFrame = new ValueResult();
             dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
-            
-            for(int u = 0; u < im2.height; u++){
-                for(int l = 0; l < im2.width ; l++){
-
+            getout++;
+            for(int u = 0; u < frame2H; u++){
+                for(int l = 0; l < frame2W ; l++){
+                    
                     int summation = 0;
                     for(int k = 0; k < 16; k++){
                         for(int y = 0; y < 16; y++){
-                            summation += abs(im1.arrayOfPixels[getIndex(i+k,j+y,im1.width)] - im2.arrayOfPixels[getIndex(u+k,l+y,im2.width)]);
+                            summation += abs(frame1[getIndex(i+k,j+y,frame1W)] - frame2[getIndex(u+k,l+y,frame2W)]);
                         }
                     }
-                    
                     if(summation < dataFrame->minimum){
                         dataFrame->minimum = summation;
                         dataFrame->iFrame2 = u;
@@ -72,22 +72,22 @@ void algorithm(Image im1, Image im2){
 
                         if(summation == 0) goto endFrame2;
                     }
+                    
                 }
             }
             endFrame2:  
-            matrixResults[i/16][j/16] = dataFrame;
+            if(getout >= sizeFrame1) goto endExecution;
         }
     }
+    endExecution:
+    printf("end execution %i \n",taskId);
 
-    printf("Matrix Results\n");
-    for(int i = 0; i < im1.height/16;i++){
-        printf("[");
-        for(int j = 0; j < im1.width/16; j++){
-            printf(" %i",matrixResults[i][j]->minimum);
-        }
-        printf("]\n");
-    }
-        
+
+
+
+
+    
+    
 }
 
 
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]){
 
     int taskid,numtasks,total,totalMacroBlock,macroblockSize,macroPerN,extraMacroBlock;
     int N = im1.height*im1.width;
-    
+    clock_t begin = clock();
     MPI_Init(&argc, &argv);
     
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
@@ -115,9 +115,12 @@ int main(int argc, char *argv[]){
     if (taskid == 0) {//master space
         total = im1.height*im1.width;
         totalMacroBlock = (im1.height/16)*(im1.width/16);
-        macroPerN = ceil( totalMacroBlock/numtasks);
+
+        macroPerN = floor( totalMacroBlock/numtasks);
+        
         extraMacroBlock = totalMacroBlock - macroPerN*numtasks ; //extra iterations
         macroblockSize = 16*16;
+        int iterationsPerN = macroPerN*macroblockSize;
         printf(" primera posicion: %i \n",im1.arrayOfPixels[0]);
         for(int dest = 1; dest < numtasks; dest++){
             MPI_Send(&macroPerN, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
@@ -125,33 +128,46 @@ int main(int argc, char *argv[]){
             MPI_Send(&im1.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
-            MPI_Send(&im1.arrayOfPixels[macroPerN*dest], macroPerN, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
+            printf("dest %i \n",dest);
+            MPI_Send(&im1.arrayOfPixels[macroPerN*macroblockSize], macroPerN*macroblockSize, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
+
             MPI_Send(im2.arrayOfPixels, N, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
         }
-
+        printf("task 0: %i \n",im1.arrayOfPixels[0]);
+        algorithm(im1.arrayOfPixels,macroPerN,im1.height,im1.width,im2.arrayOfPixels,im2.height,im2.width,0);
+        if(extraMacroBlock > 0){
+            //do something
+        }
     }
 
     if(taskid > 0){ // slaves
         int source = 0;
-        int heightim1,widthim1,heightim2,widthim2;
+        int heightIm1,widthIm1,heightIm2,widthIm2;
         MPI_Status status;
         macroblockSize = 16*16;
-        char im2Array[N];
-        MPI_Recv(&macroPerN, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        MPI_Recv(&heightim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        MPI_Recv(&widthim1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        MPI_Recv(&heightim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
-        MPI_Recv(&widthim2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         
-        printf("recibido macroperN: %i\n",macroPerN);
-        char im1Array[macroPerN*macroblockSize];
-        MPI_Recv(im1Array, macroPerN, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
+        unsigned char im2Array[N];
+        MPI_Recv(&macroPerN, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&heightIm1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&widthIm1, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&heightIm2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        MPI_Recv(&widthIm2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
+        
+        
+        unsigned char im1Array[macroPerN*macroblockSize];
+        MPI_Recv(im1Array, macroPerN*macroblockSize, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(im2Array, N, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
         printf("primer valor: %i por hilo: %i\n",im1Array[0],taskid);
         printf("tamaño de array de macrobloques: %i tamaño de frame2: %i\n",(sizeof(im1Array)/sizeof(*im1Array)),(sizeof(im2Array)/sizeof(*im2Array)));
+        printf("task 0: %i \n",im1Array[0]);
+        algorithm(im1Array,macroPerN,heightIm1,widthIm1,im2Array,heightIm2,widthIm2,taskid);
     }   
 
     
     MPI_Finalize();
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    
+    printf("The time is %.6f minutes\n", elapsed_secs/60);
     return 0;
 }
