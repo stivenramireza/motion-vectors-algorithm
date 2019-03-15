@@ -48,12 +48,13 @@ void algorithm(Image im1, Image im2){
     
     ValueResult* matrixResults[im1.height/16][im1.width/16];
 
-    #pragma omp parallel 
-    {
-        #pragma omp for schedule(dynamic)
+       
+        #pragma omp parallel for schedule(dynamic)
         for(int i = 0; i < im1.height;i+=16){
-            printf("Soy el hilo %d ----> IT: %d\n", omp_get_thread_num(), i);
+            //printf("Empiezo el hilo %d ----> IT: %d\n", omp_get_thread_num(), i);
             for(int j = 0; j < im1.width; j+=16){
+                //clock_t begin = clock();
+
                 ValueResult* dataFrame = new ValueResult();
                 dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
                 
@@ -80,11 +81,13 @@ void algorithm(Image im1, Image im2){
                     }
                 }
                 matrixResults[i/16][j/16] = dataFrame;
-            }
-            
-    
+                //clock_t end = clock();
+                //double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+                //printf("%d ------- Pare %d", i, omp_get_thread_num());
+                //printf("Tiempo en openMP por MacroBloque es %.6f minutes\n\n", elapsed_secs/60);
+            }   
         }
-    }
+    
     
     
 
