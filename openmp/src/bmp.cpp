@@ -48,12 +48,11 @@ void algorithm(Image im1, Image im2){
     
     ValueResult* matrixResults[im1.height/16][im1.width/16];
 
-    #pragma omp parallel 
-    {
-        #pragma omp for schedule(dynamic)
+       
+        #pragma omp parallel for schedule(dynamic)
         for(int i = 0; i < im1.height;i+=16){
-            printf("Soy el hilo %d ----> IT: %d\n", omp_get_thread_num(), i);
             for(int j = 0; j < im1.width; j+=16){
+            
                 ValueResult* dataFrame = new ValueResult();
                 dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
                 
@@ -80,11 +79,9 @@ void algorithm(Image im1, Image im2){
                     }
                 }
                 matrixResults[i/16][j/16] = dataFrame;
-            }
-            
-    
+            }   
         }
-    }
+    
     
     
 
@@ -112,13 +109,8 @@ int main(){
         printf("Error, The images have to be with the same width and height, Try with other images");
         exit (EXIT_FAILURE);
     }
-
-    clock_t begin = clock();
-    algorithm(im1,im2);
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
-    printf("The time in openmp is %.6f minutes", elapsed_secs/60);
+    algorithm(im1,im2);
 
     return 0;
 }

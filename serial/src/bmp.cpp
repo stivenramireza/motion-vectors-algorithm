@@ -49,7 +49,7 @@ void algorithm(Image im1, Image im2){
     
     for(int i = 0; i < im1.height;i+=16){
         for(int j = 0; j < im1.width; j+=16){
-
+            
             ValueResult* dataFrame = new ValueResult();
             dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
             
@@ -68,23 +68,25 @@ void algorithm(Image im1, Image im2){
                         dataFrame->iFrame2 = u;
                         dataFrame->jFrame2 = l;           
 
-                        if(summation == 0) goto endFrame2;
+                        if(summation == 0){
+                            u = im2.height;
+                            l = im2.width;
+                        }
                     }
                 }
             }
-            endFrame2:  
             matrixResults[i/16][j/16] = dataFrame;
         }
     }
 
-    printf("Matrix Results\n");
-    for(int i = 0; i < im1.height/16;i++){
-        printf("[");
-        for(int j = 0; j < im1.width/16; j++){
-            printf(" %i",matrixResults[i][j]->minimum);
-        }
-        printf("]\n");
-    }
+    //printf("Matrix Results\n");
+    //for(int i = 0; i < im1.height/16;i++){
+    //    printf("[");
+    //    for(int j = 0; j < im1.width/16; j++){
+    //        printf(" %i",matrixResults[i][j]->minimum);
+    //    }
+    //    printf("]\n");
+    //}
         
 }
 
