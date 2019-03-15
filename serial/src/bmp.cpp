@@ -49,6 +49,7 @@ void algorithm(Image im1, Image im2){
     
     for(int i = 0; i < im1.height;i+=16){
         for(int j = 0; j < im1.width; j+=16){
+            clock_t begin = clock();
 
             ValueResult* dataFrame = new ValueResult();
             dataFrame->minimum = 2147483647; // Maximum value for a variable of type int.
@@ -68,12 +69,19 @@ void algorithm(Image im1, Image im2){
                         dataFrame->iFrame2 = u;
                         dataFrame->jFrame2 = l;           
 
-                        if(summation == 0) goto endFrame2;
+                        if(summation == 0){
+                            u = im2.height;
+                            l = im2.width;
+                        }
                     }
                 }
             }
-            endFrame2:  
             matrixResults[i/16][j/16] = dataFrame;
+            clock_t end = clock();
+            double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    
+            printf("Tiempo en serial por MacroBloque es %.6f minutes\n\n", elapsed_secs/60);
+            
         }
     }
 
