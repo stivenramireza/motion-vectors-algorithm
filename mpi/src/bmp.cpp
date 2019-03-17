@@ -4,6 +4,8 @@
 #include "math.h"
 
 using namespace std;
+MPI_Status status;
+int numtasks;
 
 /**
  * Extraído de: https://stackoverflow.com/questions/9296059/read-pixel-value-in-bmp-file
@@ -45,7 +47,8 @@ Image readBMP(const char* filename){
 }
 
 
-void algorithm(unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,unsigned char* frame2, int frame2H, int frame2W, int taskId){
+void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,unsigned char* frame2, int frame2H, int frame2W, int taskId){
+    int matrix_final[frame1H/16][frame1W/16];
     int getout = 0;
     ValueResult* matrixResults[frame1H/16][frame1W/16];
     for(int i = 0; i < frame1H;i+=16){
@@ -74,30 +77,73 @@ void algorithm(unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,uns
                 }
             }
             endFrame2:  
-            // Se debe crear una estructura MPI_Datatype donde se guarde el dataframe
-            // y se envíe al proceso MASTER correctamente
             matrixResults[i/16][j/16] = dataFrame;
             if(getout >= sizeFrame1) goto endExecution;
         }
     }
     endExecution:
+    for(int i = 0; i < frame1H/16; ++i){
+        for(int j = 0; j < frame1W/16; ++j){
+            matrix_final[i][j] = matrixResults; 
+        }
+    }
+    if(taskId > 0){
+        MPI_Send(&matrix_final, (frame1H/16) * (frame1W/16), MPI_INT, 0, 2, MPI_COMM_WORLD);
+    }
+    printf("Se ejecutó los esclavos");
+    if(taskId == 0){
+        /* Espera los resultados de los esclavos */
+        for(int i = 1; i <= numtasks; ++i){
+            int source = i;
+            MPI_Recv(&matrix_final[frame1H][frame1W], frame1H * frame1W, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
+        }
+        /**
+        printf("Matrix Results\n");
+        for(int i = 0; i < frame1H/16;i++){
+            printf("[");
+            for(int j = 0; j < frame1W/16; j++){
+                printf(" %i",matrix_final[i][j]);
+            }
+        printf("]\n");
+        }*/
+    }
     printf("end execution from process %i \n",taskId);
 }
+/*
+ValueResult* make_matrix(int n_rows, int n_cols, int minimo) {
+    struct ValueResult* matrix = malloc(sizeof(ValueResult));
+    matrix->iFrame1 = n_rows;
+    matrix->jFrame1 = n_cols;
+    matrix->minimum = minimo;
+    return matrix;
+}*/
+/*
+void print_matrix(ValueResult* m) {
+    printf("Matrix Results\n");
+        for(int i = 0; i < im1.height/16);i++){
+            printf("[");
+            for(int j = 0; j < im1.width/16; j++){
+                printf(" %i",m[i][j]->minimum);
+            }
+        printf("]\n");
+    }
+}*/
 
 int main(int argc, char *argv[]){
     const char *f1 = "../imagenes/frame1.bmp";
     const char *f2 = "../imagenes/frame1.bmp";
     Image im1 = readBMP(f1);    
     Image im2 = readBMP(f2);
-    ValueResult* matrixResults[im1.height/16][im1.width/16];
+    int height_total = im1.height;
+    ValueResult* matrix_procesada[im1.height/16][im1.width/16];
 
     if((im1.width != im2.width) && (im1.height != im2.height)){
         printf("Error, The images have to be with the same width and height, Try with other images");
         exit (EXIT_FAILURE);
     }
 
-    int taskid,numtasks,total,totalMacroBlock,macroblockSize,macroPerN,extraMacroBlock;
-    int *sub_dataframe = NULL;
+    int taskid,total,totalMacroBlock,macroblockSize,macroPerN,extraMacroBlock;
+    int source = 0;
     int N = im1.height*im1.width;
     clock_t begin = clock();
     MPI_Init(&argc, &argv);
@@ -105,12 +151,10 @@ int main(int argc, char *argv[]){
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
 
     // Repartir procesos
-    if (taskid == 0) {//master space
+    if (taskid == 0) {//master 
         total = im1.height*im1.width;
         totalMacroBlock = (im1.height/16)*(im1.width/16);
-
         macroPerN = floor(totalMacroBlock/numtasks);
-        
         extraMacroBlock = totalMacroBlock - macroPerN*numtasks ; //extra iterations
         macroblockSize = 16*16;
         int iterationsPerN = macroPerN*macroblockSize;
@@ -126,15 +170,14 @@ int main(int argc, char *argv[]){
             MPI_Send(im2.arrayOfPixels, N, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
         }
         printf("task 0: %i \n",im1.arrayOfPixels[0]);
-        algorithm(im1.arrayOfPixels,macroPerN,im1.height,im1.width,im2.arrayOfPixels,im2.height,im2.width,0);
-        sub_dataframe = (int*)malloc(sizeof(int) * numtasks);
+        algorithm(height_total, im1.arrayOfPixels,macroPerN,im1.height,im1.width,im2.arrayOfPixels,im2.height,im2.width,0);
         if(extraMacroBlock > 0){
             //do something
         }
     }
 
     if(taskid > 0){ // slaves
-        int source = 0;
+        
         int heightIm1,widthIm1,heightIm2,widthIm2;
         MPI_Status status;
         macroblockSize = 16*16;
@@ -154,16 +197,12 @@ int main(int argc, char *argv[]){
         printf("tamaño de array de macrobloques: %i tamaño de frame2: %i\n",(sizeof(im1Array)/sizeof(*im1Array)),(sizeof(im2Array)/sizeof(*im2Array)));
         printf("task 0: %i \n",im1Array[0]);
 
-        algorithm(im1Array,macroPerN,heightIm1,widthIm1,im2Array,heightIm2,widthIm2,taskid);
+        algorithm(height_total, im1Array,macroPerN,heightIm1,widthIm1,im2Array,heightIm2,widthIm2,taskid);
     }   
-    
-    // Gather (Movimiento de datos) hacia el MASTER
-    MPI_Gather(&matrixResults, N, MPI_INT, sub_dataframe, N, MPI_INT, 0, MPI_COMM_WORLD);
-
     MPI_Finalize();
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     
-    printf("The time for process %i is %.6f minutes\n", taskid, elapsed_secs/60);
+    printf("The time for process %i was %.6f minutes\n", taskid, elapsed_secs/60);
     return 0;
 }
