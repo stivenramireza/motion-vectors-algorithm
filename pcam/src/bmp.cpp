@@ -46,10 +46,8 @@ Image readBMP(const char* filename){
 
 
 void algorithm(unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,unsigned char* frame2, int frame2H, int frame2W, int taskId){
-    
-
-    
     int getout = 0;
+    #pragma omp parallel for schedule(dynamic)
     for(int i = 0; i < frame1H;i+=16){
         for(int j = 0; j < frame1W; j+=16){
 
@@ -80,17 +78,8 @@ void algorithm(unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,uns
         }
     }
     endExecution:
-    printf("end execution %i \n",taskId);
-
-
-
-
-
-    
-    
+    printf("end execution %i \n",taskId);  
 }
-
-
 
 int main(int argc, char *argv[]){
     const char *f1 = "../imagenes/frame1.bmp";
@@ -163,7 +152,6 @@ int main(int argc, char *argv[]){
         algorithm(im1Array,macroPerN,heightIm1,widthIm1,im2Array,heightIm2,widthIm2,taskid);
     }   
 
-    
     MPI_Finalize();
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
