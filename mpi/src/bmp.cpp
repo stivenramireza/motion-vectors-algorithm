@@ -48,7 +48,6 @@ Image readBMP(const char* filename){
 
 
 void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,unsigned char* frame2, int frame2H, int frame2W, int taskId){
-    int matrix_final[frame1H/16][frame1W/16];
     int getout = 0;
     ValueResult* matrixResults[frame1H/16][frame1W/16];
     for(int i = 0; i < frame1H;i+=16){
@@ -82,11 +81,6 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
         }
     }
     endExecution:
-    for(int i = 0; i < frame1H/16; ++i){
-        for(int j = 0; j < frame1W/16; ++j){
-            matrix_final[i][j] = frame1[i * frame1W * j];
-        }
-    }
     if(taskId > 0){
         MPI_Send(&matrix_final, (frame1H/16) * (frame1W/16), MPI_INT, 0, 2, MPI_COMM_WORLD);
     }
