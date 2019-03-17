@@ -84,20 +84,19 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
     endExecution:
     for(int i = 0; i < frame1H/16; ++i){
         for(int j = 0; j < frame1W/16; ++j){
-            matrix_final[i][j] = matrixResults; 
+            matrix_final[i][j] = frame1[i * frame1W * j];
         }
     }
     if(taskId > 0){
         MPI_Send(&matrix_final, (frame1H/16) * (frame1W/16), MPI_INT, 0, 2, MPI_COMM_WORLD);
     }
-    printf("Se ejecutó los esclavos");
     if(taskId == 0){
         /* Espera los resultados de los esclavos */
         for(int i = 1; i <= numtasks; ++i){
             int source = i;
             MPI_Recv(&matrix_final[frame1H][frame1W], frame1H * frame1W, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
         }
-        /**
+        
         printf("Matrix Results\n");
         for(int i = 0; i < frame1H/16;i++){
             printf("[");
@@ -105,29 +104,10 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
                 printf(" %i",matrix_final[i][j]);
             }
         printf("]\n");
-        }*/
+        }
     }
     printf("end execution from process %i \n",taskId);
 }
-/*
-ValueResult* make_matrix(int n_rows, int n_cols, int minimo) {
-    struct ValueResult* matrix = malloc(sizeof(ValueResult));
-    matrix->iFrame1 = n_rows;
-    matrix->jFrame1 = n_cols;
-    matrix->minimum = minimo;
-    return matrix;
-}*/
-/*
-void print_matrix(ValueResult* m) {
-    printf("Matrix Results\n");
-        for(int i = 0; i < im1.height/16);i++){
-            printf("[");
-            for(int j = 0; j < im1.width/16; j++){
-                printf(" %i",m[i][j]->minimum);
-            }
-        printf("]\n");
-    }
-}*/
 
 int main(int argc, char *argv[]){
     const char *f1 = "../imagenes/frame1.bmp";
