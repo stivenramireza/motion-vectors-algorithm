@@ -22,3 +22,9 @@
 
 * Lenguaje de Programación: C++
 * Framework Aplicado: OpenMP
+
+## 1.3 Speedup
+
+
+
+## 1.4 Eficiencia

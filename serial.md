@@ -24,7 +24,13 @@ Esta la función de similitud entre 2 macro-bloques:
 
 ![Monting Vectors Algorithm](algoritmo.jpeg?raw=true?style=centerme "Motion Vectors Algorithm")
 
-## 1.2 Definición de tecnología de desarrollo para el algoritmo:
+## 1.2 Definición de tecnología de desarrollo:
 
 * Lenguaje de Programación: C++
 * Técnica Aplicada: Serial
+
+## 1.3 Speedup
+
+
+
+## 1.4 Eficiencia
