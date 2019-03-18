@@ -2,7 +2,7 @@
 
     Stiven Ramírez Arango - sramir70@eafit.edu.co
     Sebastián Ospina Cabarcas - sospin26@eafit.edu.co
-    Camilo Suaza Gallego - csuazag@eafit.edu.co
+    Camilo Suaza Gallego - csuazag@eafit.edu.co           Video: https://youtu.be/iPCX9sK8Uo4
 
 # ¿Qué es el problema de Motion Vectors (MPEG)?
 
