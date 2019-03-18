@@ -6,27 +6,6 @@
 
 # Descripción del Algoritmo Serial
 
-El problema consiste en predecir hacia donde se mueven los macro-bloques (16 x 16 pixeles) de un frame i en el frame i+1. Se realiza una búsqueda hacia delante (frames P).
-
-![Macro-bloques1](macro-bloques1.png?raw=true?style=centerme "Macro-bloques1")
-
-Cada macro-bloque se debe buscar en el frame siguiente en una región de búsqueda. Existen múltiples heurísticas para determinar la región de búsqueda. Para efectos de este problema, se tomará toda el frame i+1 como la región de búsqueda y se resolverá mediante fuerza bruta.
-
-El criterio para moverse dentro de la región de búsqueda, no es parte del estándar, para el caso de este ejercicio se utilizará búsqueda exhaustiva, es decir, en el peor de los casos (si no lo encuentra), se recorre toda la región de búsqueda con incrementos en dx y dy de un (1) pixel.
-
-Criterio de parada: cuando la función anterior es igual a cero (0), indica que ha encontrado el macro-bloque en el destino (frame i+1) y debería parar allí, si la función no es igual a cero (0), deberá encontrar el valor mínimo. 
-
-Es decir Min { val-función en región búsqueda }
-
-El resultado de la localización del macro-bloque de referencia en la región de búsqueda en el siguiente frame, será un una pareja (xi, yi) donde inicia el macrobloque en el frame destino(i+1).
-
-
-![Macro-bloques2](macro-bloques2.png?raw=true?style=centerme "Macro-bloques2")
-
-Esta la función de similitud entre 2 macro-bloques:
-
-![Sumatorias](sumatorias.png?raw=true?style=centerme "Sumatorias")
-
 # 1. Análisis
 
 ## 1.2 ¿Cómo funciona el algoritmo?
@@ -35,8 +14,6 @@ Esta la función de similitud entre 2 macro-bloques:
 El algoritmo se encarga de leer dos imágenes BMP en escala de grises. Lo primero es entender cómo es la estructura de una imagen BMP y saber cómo capturar los datos necesarios para la solución.
 
 Estructura de una imagen BMP:
-
-
 
 Para nuestro ejercicio, los campos que debemos capturar de la imagen son el width, height, bitCount, data.
 Creamos una estructura que contendrá la información de la imagen ya mencionada. Al leer la data de la imagen, esta es retornada en un arreglo, por ello debemos usar un función que mapea de la lógica matricial al arreglo, además, existe un control de que la imagen si sea de 8 bits por pixel tomando este dado del header de la imagen.
