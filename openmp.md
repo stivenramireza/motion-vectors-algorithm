@@ -39,6 +39,10 @@ Tras haber descartado las dos zonas mas internas del algoritmo, nos quedamos con
 ## 1.3 Speedup
 
 
+![Screenshot from 2019-03-18 09-01-58](https://user-images.githubusercontent.com/27482801/54535581-cd32fb00-495c-11e9-8572-1d1c251f074d.png)
+
+Lo que nos representa esta gráfica es que a medida que vamos incrementando el número de hilos, el speedup que arroja el algoritmo es mejor, los tiempos de procesamiento bajan porque se reparte entre los n hilos las iteraciones. Suponiendo que llegásemos a tener 30 cores, podríamos hacer que cada hilo este en un core y esto haría que todo el procesamiento del algoritmo para esta imagen en específico se vuelva muchísimo más rápido ya que, sabemos que el tiempo real en serial son 474.605 segundos, repartiendo las 30 iteraciones entre los 30 hilos podríamos hacer un cálculo estimado que bajaría a 15 segunos procesar todo el algoritmo.
+
 
 ## 1.4 Eficiencia
 
