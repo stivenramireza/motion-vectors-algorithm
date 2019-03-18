@@ -41,10 +41,14 @@ Tras haber descartado las dos zonas mas internas del algoritmo, nos quedamos con
 
 ![Screenshot from 2019-03-18 09-01-58](https://user-images.githubusercontent.com/27482801/54535581-cd32fb00-495c-11e9-8572-1d1c251f074d.png)
 
-Lo que nos representa esta gráfica es que a medida que vamos incrementando el número de hilos, el speedup que arroja el algoritmo es mejor, los tiempos de procesamiento bajan porque se reparte entre los n hilos las iteraciones. Suponiendo que llegásemos a tener 30 cores, podríamos hacer que cada hilo este en un core y esto haría que todo el procesamiento del algoritmo para esta imagen en específico se vuelva muchísimo más rápido ya que, sabemos que el tiempo real en serial son 474.605 segundos, repartiendo las 30 iteraciones entre los 30 hilos podríamos hacer un cálculo estimado que bajaría a 15 segunos procesar todo el algoritmo.
+Lo que nos representa esta gráfica es que a medida que vamos incrementando el número de hilos, el speedup que arroja el algoritmo es mejor, los tiempos de procesamiento bajan porque se reparte entre los n hilos las iteraciones. Suponiendo que llegásemos a tener 29 cores, podríamos hacer que cada hilo este en un core y esto haría que todo el procesamiento del algoritmo para esta imagen en específico se vuelva muchísimo más rápido ya que, sabemos que el tiempo real en serial son 474.605 segundos, repartiendo las 29 iteraciones entre los 29 hilos podríamos hacer un cálculo estimado que bajaría a 15 segunos procesar todo el algoritmo.
 
 
 ## 1.4 Eficiencia
+
+![Screenshot from 2019-03-18 09-02-40](https://user-images.githubusercontent.com/27482801/54536044-ec7e5800-495d-11e9-95fd-280c12a316fb.png)
+
+Lo que nos representa esta gráfica es que a medida que incrementamos nuestro número de hilos, nuestro problema decrece en eficiencia, pero, ¿por qué?, la razón es muy simple,  la pérdida de eficiencia se debe a una falta de paralelismo del problema/algoritmo dependiendo del número de iteraciones que se vayan a repartir entre los hilos, es decir, vemos que para el ejercicio de la imagen, estamos repartiendo 29 iteraciones entre n hilos, ¿qué sucede si tenemos que el #Iteraciones >> #Hilos? lo primero es que tendríamos que tener una máquina con muchos cores y esto sería muy costoso, lo segundo es que vamos a tener hilos que no harán nada debido que los primeros 29 hilos tendrán asignado un procesamiento. Llegado el caso que no tuviesemos los 29 cores reales en la máquina, la máquina tendría que virtualizar los que le faltan, haciendo que en si el algoritmo pierda eficiencia debido que se vuelve un problema serial porque los hilos tendran que repartirse tiempo de procesador en determinado core. Como conclusión vemos que el punto más eficiente para nuestro algoritmo es dejando que el # de iteraciones que se reparten, sea igual a la cantidad de los cores disponibles para así hacer que cada hilo haga un procesamiento independiente y optimice su recurso.
 
 
 
