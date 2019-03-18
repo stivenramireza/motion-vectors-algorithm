@@ -81,25 +81,6 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
         }
     }
     endExecution:
-    if(taskId > 0){
-        MPI_Send(&matrix_final, (frame1H/16) * (frame1W/16), MPI_INT, 0, 2, MPI_COMM_WORLD);
-    }
-    if(taskId == 0){
-        /* Espera los resultados de los esclavos */
-        for(int i = 1; i <= numtasks; ++i){
-            int source = i;
-            MPI_Recv(&matrix_final[frame1H][frame1W], frame1H * frame1W, MPI_INT, source, 2, MPI_COMM_WORLD, &status);
-        }
-        
-        printf("Matrix Results\n");
-        for(int i = 0; i < frame1H/16;i++){
-            printf("[");
-            for(int j = 0; j < frame1W/16; j++){
-                printf(" %i",matrix_final[i][j]);
-            }
-        printf("]\n");
-        }
-    }
     printf("end execution from process %i \n",taskId);
 }
 
