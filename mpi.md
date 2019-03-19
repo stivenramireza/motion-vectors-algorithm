@@ -27,7 +27,7 @@ Posteriormente, el **MASTER** comienza a ejecutarse y define los datos que se en
 
 El **taskid 0** que es el **MASTER** envía los siguientes datos a sus esclavos:
 
-    - Tamaño del macro-bloque divido entre el número de tasks**
+    - Tamaño del macro-bloque divido entre el número de tasks
     - Height del frame 1
     - Width del frame 1
     - Height del frame 2
