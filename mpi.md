@@ -21,19 +21,19 @@ universal el **idtask** (id del proceso) y el **numtasks** (número de procesos 
 
 Posteriormente, el **MASTER** comienza a ejecutarse y define los datos que se enviarán a los **SLAVES** para que éstos los procesen. Entre los datos se encuentran:
 
-**- Tamaño total del frame 1**
-**- Tamaño total del macro-bloque**
-**- Tamaño del macro-bloque divido entre el número de tasks**
+    - Tamaño total del frame 1
+    - Tamaño total del macro-bloque
+    - Tamaño del macro-bloque divido entre el número de tasks
 
 El **taskid 0** que es el **MASTER** envía los siguientes datos a sus esclavos:
 
-**- Tamaño del macro-bloque divido entre el número de tasks**
-**- Height del frame 1**
-**- Width del frame 1**
-**- Height del frame 2**
-**- Width del frame 2**
-**- Matriz de pixeles del frame 1**
-**- Matriz de pixeles del frame 2**
+    - Tamaño del macro-bloque divido entre el número de tasks**
+    - Height del frame 1
+    - Width del frame 1
+    - Height del frame 2
+    - Width del frame 2
+    - Matriz de pixeles del frame 1
+    - Matriz de pixeles del frame 2
 
 Y con estos datos los **SLAVES** trabajan en la ejecución del algoritmo con memoria distribuida en diferentes
 procesadores de la siguiente manera:
@@ -59,10 +59,10 @@ En esta zona se itera sobre el frame 1 de macro-bloque en macro-bloque, es decir
 
 ![speedup](https://user-images.githubusercontent.com/31974084/54575978-5b8e9780-49c4-11e9-8ebe-da02ab4af4ed.jpeg)
 
-Lo que nos representa esta gráfica es que a medida que vamos incrementando el número de nodos (procesadores), el speedup que arroja el algoritmo es mejor, los tiempos de procesamiento bajan porque se reparte entre los n procesadores las iteraciones. Suponiendo que llegásemos a tener 29 cores, podríamos hacer que cada hilo este en un core y esto haría que todo el procesamiento del algoritmo para esta imagen en específico se vuelva muchísimo más rápido ya que, sabemos que el tiempo real en serial son 474.605 segundos, repartiendo las 29 iteraciones entre los 29 nodos podríamos hacer un cálculo estimado que bajaría a 15 segundos procesar todo el algoritmo.
+Lo que nos representa esta gráfica es que a medida que vamos incrementando el número de nodos (procesadores), el speedup que arroja el algoritmo es mejor, los tiempos de procesamiento bajan porque se reparte entre los n procesadores las iteraciones.
 
 ## 1.4 Eficiencia
 
 ![eficiencia](https://user-images.githubusercontent.com/31974084/54575882-f470e300-49c3-11e9-81ba-166c30b0fd16.jpeg)
 
-Lo que nos representa esta gráfica es que a medida que incrementamos nuestro número de nodos, nuestro problema decrece en eficiencia, pero, ¿por qué?, la razón es muy simple,  la pérdida de eficiencia se debe a una falta de paralelismo del problema/algoritmo dependiendo del número de iteraciones que se vayan a repartir entre los hilos, es decir, vemos que para el ejercicio de la imagen, estamos repartiendo 29 iteraciones entre n procesos. Como conclusión vemos que el punto más eficiente para nuestro algoritmo es dejando que el # de iteraciones que se reparten, sea igual a la cantidad de los cores disponibles para así hacer que cada proceso haga un procesamiento independiente y optimice su recurso.
+Lo que nos representa esta gráfica es que a medida que incrementamos nuestro número de nodos, nuestro problema decrece en eficiencia, pero, ¿por qué?, la razón es muy simple, la pérdida de eficiencia se debe a una falta de paralelismo del problema/algoritmo dependiendo del número de iteraciones que se vayan a repartir entre los hilos. Como conclusión vemos que el punto más eficiente para nuestro algoritmo es dejando que el # de iteraciones que se reparten, sea igual a la cantidad de los cores disponibles para así hacer que cada proceso haga un procesamiento independiente y optimice su recurso.
