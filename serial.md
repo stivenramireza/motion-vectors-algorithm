@@ -14,14 +14,14 @@
 
 El algoritmo se encarga de leer dos imágenes BMP en escala de grises. Lo primero es entender cómo es la estructura de una imagen BMP y saber cómo capturar los datos necesarios para la solución.
 
-# 1.2.2 Estructura de una imagen BMP:
+# 1.2.2 Estructura de una imagen BMP
 
 Para nuestro ejercicio, los campos que debemos capturar de la imagen son el width, height, bitCount, data.
 Creamos una estructura que contendrá la información de la imagen ya mencionada. Al leer la data de la imagen, esta es retornada en un arreglo, por ello debemos usar un función que mapea de la lógica matricial al arreglo, además, existe un control de que la imagen si sea de 8 bits por pixel tomando este dado del header de la imagen.
 
 # 1.2.3 Procesamiento del algoritmo
 
-Para el procesamiento del algoritmo tenemos 6 ciclos anidados, dándonos un orden de **O(n^6)**.
+Para el procesamiento del algoritmo tenemos 6 ciclos anidados, dándonos una complejidad de **O(n^6)**.
 
 Los **primeros dos ciclos**, iteran sobre el frame 1 de macro-bloque en macro-bloque, es decir, por cada iteración se incrementa en 16 en 16 tanto para las filas como para las columnas de la matriz. Por cada iteración en el frame 1, creamos una estructura que almacenará el resultado del valor mínimo encontrado en el frame 2 con sus respectivos índices.
 
@@ -38,4 +38,6 @@ Por cada macro-bloque del frame 1 tenemos una estructura que contiene la informa
 
 ## 1.3 Tiempo de ejecución
 
-Como la ejecución de este algoritmo es en serial, solo se está usando un core. el tiempo que toma recorrer todas las dos matrices y operar es de 474.603 segundos con imágenes diferentes de 640 x 480 píxeles.
+Como la ejecución de este algoritmo es en serial, solo se está usando **1 core**.
+
+El tiempo que toma recorrer todas las dos matrices y operar es de **474.603 segundos** con imágenes diferentes de 640 x 480 píxeles.
