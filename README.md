@@ -28,16 +28,55 @@ Esta la función de similitud entre 2 macro-bloques:
 
 # 1. Algoritmo Serial
 
+Para compilarlo en el cluster:
+
+    $ cd serial/src/
+    $ g++ bmp.cpp -o bmp-serial
+
+Para ejecutarlo:
+
+    $ time ./bmp-serial
+
+El análisis y diseño del algoritmo en el siguiente link:
+
 * [Algoritmo Serial](serial.md)
 
 # 2. Algoritmo Paralelo con OpenMP
+
+Para compilarlo y ejecutarlo en el cluster:
+
+    $ cd openmp/src/
+    $ g++ bmp.cpp -o bmp-openmp -fopenmp
+    $ export OMP_NUM_THREADS=2              // Para configurar el número de cores
+    $ export OMP_DISPLAY_ENV=’true’         // Para configurar la info del ambiente de ejecución
+    $ time ./bmp-openmp
+
+El análisis y diseño del algoritmo en el siguiente link:
 
 * [Algoritmo Paralelo con OpenMP](openmp.md)
 
 # 3. Algoritmo Paralelo con MPI
 
+Para compilarlo y ejecutarlo en cluster:
+
+    $ cd mpi/src/
+    $ mpic++ -O2 -w bmp.cpp -o bmp-mpi
+    $ time mpirun -f ../hosts_mpi -np 3 ./bmp-mpi   // Donde np es el número de procesadores
+
+El análisis y diseño del algoritmo en el siguiente link:
+
 * [Algoritmo Paralelo con MPI](mpi.md)
 
 # 4. Algoritmo Paralelo con OpenMP y MPI (PCAM)
+
+Para compilarlo y ejecutarlo en cluster:
+
+    $ cd mpi/src/
+    $ mpic++ -O2 -w bmp.cpp -o bmp-mpi
+    $ export OMP_NUM_THREADS=2                      // Para configurar el número de cores
+    $ export OMP_DISPLAY_ENV=’true’                 // Para configurar la info del ambiente de ejecución
+    $ time mpirun -f ../hosts_mpi -np 3 ./bmp-mpi   // Donde np es el número de procesadores
+
+El análisis y diseño del algoritmo en el siguiente link:
 
 * [Algoritmo Paralelo con OpenMP y MPI (PCAM)](pcam.md)
