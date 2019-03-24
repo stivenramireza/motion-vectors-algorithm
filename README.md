@@ -1,7 +1,7 @@
 # Proyecto 2 - Motion Vectors Algorithm
 
     Stiven Ramírez Arango - sramir70@eafit.edu.co
-    Sebastián Ospina Cabarcas - sospin26@eafit.edu.co
+    Sebastián Ospina Cabarcas - sospin26@eafit.edu.co     video: https://bit.ly/2uz4NOR
     Camilo Suaza Gallego - csuazag@eafit.edu.co           Video: https://youtu.be/twhuJ5_RIso
 
 # ¿Qué es el problema de Motion Vectors (MPEG)?
