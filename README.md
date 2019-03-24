@@ -1,8 +1,8 @@
 # Proyecto 2 - Motion Vectors Algorithm
 
     Stiven Ramírez Arango - sramir70@eafit.edu.co
-    Sebastián Ospina Cabarcas - sospin26@eafit.edu.co     video: https://bit.ly/2uz4NOR
-    Camilo Suaza Gallego - csuazag@eafit.edu.co           Video: https://youtu.be/twhuJ5_RIso
+    Sebastián Ospina Cabarcas - sospin26@eafit.edu.co     Video Sustentación: https://bit.ly/2uz4NOR
+    Camilo Suaza Gallego - csuazag@eafit.edu.co           Video Sustentación: https://youtu.be/twhuJ5_RIso
 
 # ¿Qué es el problema de Motion Vectors (MPEG)?
 
@@ -30,8 +30,8 @@ Esta la función de similitud entre 2 macro-bloques:
 
 Para compilarlo en el cluster:
 
-    $ cd serial/src/
-    $ g++ bmp.cpp -o bmp-serial
+    $ cd serial/
+    $ g++ src/bmp.cpp -o bmp-serial
 
 Para ejecutarlo:
 
@@ -45,8 +45,8 @@ El análisis y diseño del algoritmo en el siguiente link:
 
 Para compilarlo y ejecutarlo en el cluster:
 
-    $ cd openmp/src/
-    $ g++ bmp.cpp -o bmp-openmp -fopenmp
+    $ cd openmp/
+    $ g++ src/ bmp.cpp -o bmp-openmp -fopenmp
     $ export OMP_NUM_THREADS=2              // Para configurar el número de cores
     $ export OMP_DISPLAY_ENV=’true’         // Para configurar la info del ambiente de ejecución
     $ time ./bmp-openmp
@@ -59,9 +59,9 @@ El análisis y diseño del algoritmo en el siguiente link:
 
 Para compilarlo y ejecutarlo en cluster:
 
-    $ cd mpi/src/
-    $ mpic++ -O2 -w bmp.cpp -o bmp-mpi
-    $ time mpirun -f ../hosts_mpi -np 3 ./bmp-mpi   // Donde np es el número de procesadores
+    $ cd mpi/s
+    $ mpic++ -O2 -w src/bmp.cpp -o bmp-mpi
+    $ time mpirun -f hosts_mpi -np 3 ./bmp-mpi   // Donde np es el número de procesadores
 
 El análisis y diseño del algoritmo en el siguiente link:
 
@@ -71,8 +71,8 @@ El análisis y diseño del algoritmo en el siguiente link:
 
 Para compilarlo y ejecutarlo en cluster:
 
-    $ cd mpi/src/
-    $ mpic++ -O2 -w bmp.cpp -o bmp-mpi
+    $ cd pcam/
+    $ mpic++ -O2 -w src/bmp.cpp -o bmp-pcam
     $ export OMP_NUM_THREADS=2                      // Para configurar el número de cores
     $ export OMP_DISPLAY_ENV=’true’                 // Para configurar la info del ambiente de ejecución
     $ time mpirun -f ../hosts_mpi -np 3 ./bmp-mpi   // Donde np es el número de procesadores
