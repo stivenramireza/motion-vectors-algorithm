@@ -46,9 +46,9 @@ El análisis y diseño del algoritmo en el siguiente link:
 Para compilarlo y ejecutarlo en el cluster:
 
     $ cd openmp/
-    $ g++ src/ bmp.cpp -o bmp-openmp -fopenmp
-    $ export OMP_NUM_THREADS=2              // Para configurar el número de cores
-    $ export OMP_DISPLAY_ENV=’true’         // Para configurar la info del ambiente de ejecución
+    $ g++ src/bmp.cpp -o bmp-openmp -fopenmp
+    $ export OMP_NUM_THREADS=2                      // Para configurar el número de cores
+    $ export OMP_DISPLAY_ENV=’true’                 // Para configurar la info del ambiente de ejecución
     $ time ./bmp-openmp
 
 El análisis y diseño del algoritmo en el siguiente link:
@@ -59,9 +59,9 @@ El análisis y diseño del algoritmo en el siguiente link:
 
 Para compilarlo y ejecutarlo en cluster:
 
-    $ cd mpi/s
+    $ cd mpi/
     $ mpic++ -O2 -w src/bmp.cpp -o bmp-mpi
-    $ time mpirun -f hosts_mpi -np 3 ./bmp-mpi   // Donde np es el número de procesadores
+    $ time mpirun -f hosts_mpi -np 3 ./bmp-mpi      // Donde np es el número de procesadores
 
 El análisis y diseño del algoritmo en el siguiente link:
 
@@ -75,7 +75,7 @@ Para compilarlo y ejecutarlo en cluster:
     $ mpic++ -O2 -w src/bmp.cpp -o bmp-pcam
     $ export OMP_NUM_THREADS=2                      // Para configurar el número de cores
     $ export OMP_DISPLAY_ENV=’true’                 // Para configurar la info del ambiente de ejecución
-    $ time mpirun -f ../hosts_mpi -np 3 ./bmp-mpi   // Donde np es el número de procesadores
+    $ time mpirun -f hosts_mpi -np 3 ./bmp-pcam     // Donde np es el número de procesadores
 
 El análisis y diseño del algoritmo en el siguiente link:
 
