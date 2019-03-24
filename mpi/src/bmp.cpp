@@ -77,11 +77,11 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
             }
             endFrame2:  
             matrixResults[i/16][j/16] = dataFrame;
-            //if(getout >= sizeFrame1) goto endExecution;
+            if(getout >= sizeFrame1) goto endExecution;
         }
     }
-    //endExecution:
-    //printf("end execution from process %i \n",taskId);
+    endExecution:
+    printf("end execution from process %i \n",taskId);
 }
 
 int main(int argc, char *argv[]){
