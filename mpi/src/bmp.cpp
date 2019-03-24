@@ -77,6 +77,7 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
             }
             endFrame2:  
             matrixResults[i/16][j/16] = dataFrame;
+<<<<<<< HEAD
 	    printf("Matrix Results\n");
     	    for(int i = 0; i < frame1H/16;i++){
               printf("[");
@@ -87,10 +88,13 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
             }
 
             //if(getout >= sizeFrame1) goto endExecution;
+=======
+            if(getout >= sizeFrame1) goto endExecution;
+>>>>>>> b0aae24dd14279e4996e6e41b775d5e04575e6bf
         }
     }
-    //endExecution:
-    //printf("end execution from process %i \n",taskId);
+    endExecution:
+    printf("end execution from process %i \n",taskId);
 }
 
 int main(int argc, char *argv[]){
