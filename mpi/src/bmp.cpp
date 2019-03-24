@@ -81,7 +81,7 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
         }
     }
     endExecution:
-    //printf("end execution from process %i \n",taskId);
+    printf("end execution from process %i \n",taskId);
 }
 
 int main(int argc, char *argv[]){

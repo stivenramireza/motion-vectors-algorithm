@@ -78,7 +78,7 @@ void algorithm(unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,uns
         }
     }
     endExecution:
-    //printf("end execution %i \n",taskId);  
+    printf("end execution %i \n",taskId);  
 }
 
 int main(int argc, char *argv[]){
