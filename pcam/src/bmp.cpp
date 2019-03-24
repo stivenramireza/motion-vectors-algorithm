@@ -24,7 +24,7 @@ Image readBMP(const char* filename){
 
     unsigned short int  bits = *(short *) &info[28];
     if(bits != 8){
-        //printf("Error, The image has to be of 8 Bits");
+        printf("Error, The image has to be of 8 Bits");
         exit (EXIT_FAILURE);
     }
     
@@ -47,6 +47,7 @@ Image readBMP(const char* filename){
 
 void algorithm(unsigned char frame1[],int sizeFrame1,int frame1H,int frame1W,unsigned char* frame2, int frame2H, int frame2W, int taskId){
     int getout = 0;
+
     #pragma omp parallel for schedule(dynamic)
     for(int i = 0; i < frame1H;i+=16){
         for(int j = 0; j < frame1W; j+=16){
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]){
     Image im2 = readBMP(f2);
 
     if((im1.width != im2.width) && (im1.height != im2.height)){
-        //printf("Error, The images have to be with the same width and height, Try with other images");
+        printf("Error, The images have to be with the same width and height, Try with other images");
         exit (EXIT_FAILURE);
     }
 
@@ -110,23 +111,16 @@ int main(int argc, char *argv[]){
         extraMacroBlock = totalMacroBlock - macroPerN*numtasks ; //extra iterations
         macroblockSize = 16*16;
         int iterationsPerN = macroPerN*macroblockSize;
-        //printf(" primera posicion: %i \n",im1.arrayOfPixels[0]);
         for(int dest = 1; dest < numtasks; dest++){
             MPI_Send(&macroPerN, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im1.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im1.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.height, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
             MPI_Send(&im2.width, 1, MPI_INT, dest, 1, MPI_COMM_WORLD);
-            //printf("dest %i \n",dest);
             MPI_Send(&im1.arrayOfPixels[macroPerN*macroblockSize*dest], macroPerN*macroblockSize, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
-
             MPI_Send(im2.arrayOfPixels, N, MPI_CHAR, dest, 1, MPI_COMM_WORLD);
         }
-        //printf("task 0: %i \n",im1.arrayOfPixels[0]);
         algorithm(im1.arrayOfPixels,macroPerN,im1.height,im1.width,im2.arrayOfPixels,im2.height,im2.width,0);
-        if(extraMacroBlock > 0){
-            //do something
-        }
     }
 
     if(taskid > 0){ // slaves
@@ -142,20 +136,14 @@ int main(int argc, char *argv[]){
         MPI_Recv(&heightIm2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(&widthIm2, 1, MPI_INT, source, 1, MPI_COMM_WORLD, &status);
         
-        
         unsigned char im1Array[macroPerN*macroblockSize];
         MPI_Recv(im1Array, macroPerN*macroblockSize, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
         MPI_Recv(im2Array, N, MPI_CHAR, source, 1, MPI_COMM_WORLD, &status);
-        //printf("primer valor: %i por hilo: %i\n",im1Array[0],taskid);
-        //printf("tamaño de array de macrobloques: %i tamaño de frame2: %i\n",(sizeof(im1Array)/sizeof(*im1Array)),(sizeof(im2Array)/sizeof(*im2Array)));
-        //printf("task 0: %i \n",im1Array[0]);
         algorithm(im1Array,macroPerN,heightIm1,widthIm1,im2Array,heightIm2,widthIm2,taskid);
     }   
 
     MPI_Finalize();
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    
-    //printf("The time is %.6f minutes\n", elapsed_secs/60);
     return 0;
 }
