@@ -77,6 +77,15 @@ void algorithm(int height, unsigned char frame1[],int sizeFrame1,int frame1H,int
             }
             endFrame2:  
             matrixResults[i/16][j/16] = dataFrame;
+	    printf("Matrix Results\n");
+    	    for(int i = 0; i < frame1H/16;i++){
+              printf("[");
+    	      for(int j = 0; j < frame1W/16; j++){
+                 printf(" %i",matrixResults[i][j]->minimum);
+              }
+              printf("]\n");
+            }
+
             //if(getout >= sizeFrame1) goto endExecution;
         }
     }
