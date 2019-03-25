@@ -1,6 +1,6 @@
 # Proyecto 2 - Motion Vectors Algorithm
 
-    Stiven Ramírez Arango - sramir70@eafit.edu.co
+    Stiven Ramírez Arango - sramir70@eafit.edu.co         Video Sustentación: https://youtu.be/LGyvxVcGvYo
     Sebastián Ospina Cabarcas - sospin26@eafit.edu.co     Video Sustentación: https://bit.ly/2uz4NOR
     Camilo Suaza Gallego - csuazag@eafit.edu.co           Video Sustentación: https://youtu.be/twhuJ5_RIso
 

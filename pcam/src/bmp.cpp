@@ -106,7 +106,7 @@ int main(int argc, char *argv[]){
         total = im1.height*im1.width;
         totalMacroBlock = (im1.height/16)*(im1.width/16);
 
-        macroPerN = floor( totalMacroBlock/numtasks);
+        macroPerN = floor(totalMacroBlock/numtasks);
         
         extraMacroBlock = totalMacroBlock - macroPerN*numtasks ; //extra iterations
         macroblockSize = 16*16;
