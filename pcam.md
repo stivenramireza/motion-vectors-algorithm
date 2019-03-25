@@ -74,4 +74,12 @@ Finalmente, la matriz de mínimos es enviada al **MASTER** y muestra sus resulta
 
 ## 1.3 Speedup
 
+![speedup](https://user-images.githubusercontent.com/31974084/54939840-8febe180-4ef7-11e9-8d83-372e4dabb867.jpg)
+
+Lo que nos representa esta gráfica es que a medida que vamos incrementando el número de nodos (procesadores), el speedup que arroja el algoritmo es bueno, pero no presenta una mejoría significativa como el algoritmo MPI, pues los tiempos de procesamiento mantienen constante a pesar de incrementar el número de hilos de ejecución.
+
 ## 1.4 Eficiencia
+
+![eficiencia](https://user-images.githubusercontent.com/31974084/54939886-a2661b00-4ef7-11e9-9ead-e9b9e7037a10.jpg)
+
+Lo que nos representa esta gráfica es que a medida que incrementamos nuestro número de nodos, nuestro problema decrece en eficiencia, pero, ¿por qué?, la razón es muy simple, la pérdida de eficiencia se debe a una falta de paralelismo del problema/algoritmo dependiendo del número de iteraciones que se vayan a repartir entre los hilos. Como conclusión vemos que el punto más eficiente para nuestro algoritmo es dejando que el # de iteraciones que se reparten, sea igual a la cantidad de los cores disponibles para así hacer que cada proceso haga un procesamiento independiente y optimice su recurso.
