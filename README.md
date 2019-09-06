@@ -6,7 +6,7 @@
 
 # ¿Qué es el problema de Motion Vectors (MPEG)?
 
-El problema consiste en predecir hacia donde se mueven los macro-bloques (16 x 16 pixeles) de un frame i en el frame i+1. Se realiza una búsqueda hacia delante (frames P).
+El problema consiste en predecir hacia donde se mueven los macro-bloques (16x16 pixeles) de un frame i en el frame i+1. Se realiza una búsqueda hacia delante (frames P).
 
 ![Macro-bloques1](macro-bloques1.png?raw=true?style=centerme "Macro-bloques1")
 
